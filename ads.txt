@@ -1,0 +1,15 @@
+// ADMYSPORTS
+
+teads.tv, 12361, RESELLER, 15a9c44f6d26cbe1
+smartadserver.com,2176,RESELLER
+indexexchange.com,179394,RESELLER
+contextweb.com,560288,RESELLER
+google.com, pub-3651508233665711, RESELLER, f08c47fec0942fa0
+pubmatic.com,156439,RESELLER
+rubiconproject.com,16114,RESELLER
+openx.com,537149888,RESELLER,a698e2ec38604c6
+rubiconproject.com, 14794, RESELLER, 0bfd66d529a55807
+adtech.com, 1502, RESELLER
+improvedigital.com, 1056, RESELLER
+
+google.com, pub-2816435235779198, DIRECT, f08c47fec0942fa0
