@@ -2,6 +2,20 @@
 
 var AMSID = '909426';
 
+var pbAMS = {
+    analytics: {
+        trackAdblock: true,
+        trackPrebid: true,
+    },    
+    autoRefresh: {
+        interval: 15000, //milliseconds
+        minVisibility: 0.75, //range 0-1
+    }
+}
+
+// [6544250,6544251,6544253,6544244,6544240]
+
+
 /* Wallpaper */
 
 var wallpaperdesk = 6544243
@@ -161,6 +175,7 @@ var adUnits = [
     {
         code: leaderatfdesk + '',
         alias: aleaderatfdesk,
+        autoRefresh: true,
         fif: { usefif: true },
         responsive: {useresponsive: true},        
         sizeMapping: [
@@ -293,6 +308,7 @@ var adUnits = [
     {
         code: leaderbtfdesk + '',
         responsive: {useresponsive: true},
+        autoRefresh: true,
         fif: { usefif: true },
         sizeMapping: [
             {
@@ -424,6 +440,7 @@ var adUnits = [
     {
         code: squareatfdesk + '',
         responsive: {useresponsive: true},
+        autoRefresh: true,
         fif: { usefif: true },
         sizeMapping: [
             {
@@ -684,25 +701,38 @@ var adUnits = [
         ]
     },
  
-    ]
+]
 
-    function placesquare() {
-        
+function placesquare() {
+    
 
-        var div1 = document.createElement("div");
-        
-        div1.setAttribute("id", "squarestf");
-        
-        var div2 = document.getElementsByClassName("evcal_month_line")[1];
-        
-        var parentDiv = div2.parentNode;
-        
-        parentDiv.insertBefore(div1, div2);
-        
-        document.getElementById('squarestf').appendChild(document.getElementById('6544251'));
-        document.getElementById('squarestf').style.marginTop ="10px";
-        }
+    var div1 = document.createElement("div");
+    
+    div1.setAttribute("id", "squarestf");
+    
+    var div2 = document.getElementsByClassName("evcal_month_line")[1];
+    
+    var parentDiv = div2.parentNode;
+    
+    parentDiv.insertBefore(div1, div2);
+    
+    document.getElementById('squarestf').appendChild(document.getElementById('6544251'));
+    document.getElementById('squarestf').style.marginTop ="10px";
+    }
 
-        document.addEventListener('DOMContentLoaded', function () {
-            placesquare()
-        }, false);
+    document.addEventListener('DOMContentLoaded', function () {
+        // placesquare()
+    }, false);
+
+
+(function () {
+    var d = document;
+    var helpers = d.createElement("script");
+    helpers.type = "text/javascript";
+    helpers.src = 'https://firebasestorage.googleapis.com/v0/b/admytests.appspot.com/o/helpers.js?alt=media&token=f48e6b91-cb1b-488c-b26e-8624bb5180df';
+    var target = d.getElementsByTagName("head")[0];
+    target.insertBefore(helpers, target.firstChild);
+})();    
+
+
+    
