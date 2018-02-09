@@ -52,7 +52,7 @@ function initAdserver() {
     var d = document;
     var pbs = d.createElement("script");
     pbs.type = "text/javascript";
-    pbs.src = 'https://s3.eu-central-1.amazonaws.com/hbams/lib/prebid-a.js';
+    pbs.src = 'https://firebasestorage.googleapis.com/v0/b/admytests.appspot.com/o/prebid.js?alt=media';
     var target = d.getElementsByTagName("head")[0];
     target.insertBefore(pbs, target.firstChild);
 })();
@@ -66,8 +66,8 @@ function initAdserver() {
 })();
 
 
-var pbjs = pbjs || {};
-var pbams = pbjs || {};
+// var pbjs = pbjs || {};
+var pbams = pbams || {};
 pbams.que = pbams.que || [];
 
 var adUnitsByToken;
@@ -360,20 +360,21 @@ document.addEventListener('DOMContentLoaded',function() {
     var adUnitsIdAvailableOnPage = loadAdUnitsIdsOnPage();    
     console.log("DOMLoad: " + adUnitsIdAvailableOnPage.length);
     
-   // addAdUnits(adUnitsIdAvailableOnPage);    
+    setTimeout(function() {addAdUnits(adUnitsIdAvailableOnPage)},5000);    
     setInterval(function(){refresh();},pbAMS.autoRefresh.interval);
     if (pbAMS.analytics.trackAdblock) {
         trackAdblock();
     }
 });
+configBid();
+
+if (prebidAdUnits.length > 0) {
+    addAdUnits(prebidAdUnits);
+    console.log(prebidAdUnits.length);
+}   
 
 function init() {
-    pbAMS = mergeRecursive(globalConfig, pbAMS);    
-    configBid();
-    console.log(pbAMS.prebidAdUnits.length);
-    if (pbAMS.prebidAdUnits.length > 0) {
-        addAdUnits(pbAMS.prebidAdUnits);
-    }   
+    pbAMS = mergeRecursive(globalConfig, pbAMS);      
 }
 
 (function () {

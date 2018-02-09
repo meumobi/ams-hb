@@ -8,6 +8,8 @@ var globalConfig = {
         minVisibility: 0.80, //range 0-1
         onlyIfBidWinner: false,
     },
-    bidTimeout: 1500 
+    bidTimeout: 1500,
+    trackPrebidTime: true
+
 }
 console.log("config loaded");

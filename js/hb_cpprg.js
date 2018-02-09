@@ -10,11 +10,10 @@ var pbAMS = {
     autoRefresh: {
         interval: 15000, //milliseconds
         minVisibility: 0.75, //range 0-1
-    },
-    prebidAdUnits: ["6544250","6544251","6544253","6544244","6544240"]
-
+    }
 }
 
+var prebidAdUnits = ["6544251"];
 
 
 /* Wallpaper */
