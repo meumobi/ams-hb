@@ -1,20 +1,14 @@
-/* Websites infos */
+var hbAMS = {};
 
-var AMSID = '909426';
-
-var pbAMS = {
-    analytics: {
-        trackAdblock: true,
-        trackPrebid: true,
-    },    
+hbAMS.settings = {
+    siteId: '909426',
+    prebidAdUnitIds: ["6544251"],
     autoRefresh: {
-        interval: 15000, //milliseconds
-        minVisibility: 0.75, //range 0-1
-    }
+        interval: 35000, // milliseconds
+        minVisibility: 0.49, // range 0-1
+        // onlyIfBidWinner
+    },
 }
-
-var prebidAdUnits = ["6544251"];
-
 
 /* Wallpaper */
 
@@ -115,7 +109,7 @@ var IdzoneRubibtfm =  '806230';
 
 /* var AdUnits*/
 
-var adUnits = [
+hbAMS.settings.adUnits = [
     {
         code: wallpaperdesk + '',
         responsive: {useresponsive: true},
@@ -689,16 +683,3 @@ function placesquare() {
     document.addEventListener('DOMContentLoaded', function () {
         // placesquare()
     }, false);
-
-
-(function () {
-    var d = document;
-    var helpers = d.createElement("script");
-    helpers.type = "text/javascript";
-    helpers.src = 'https://firebasestorage.googleapis.com/v0/b/admytests.appspot.com/o/helpers.js?alt=media&token=f48e6b91-cb1b-488c-b26e-8624bb5180df';
-    var target = d.getElementsByTagName("head")[0];
-    target.insertBefore(helpers, target.firstChild);
-})();    
-
-
-    
