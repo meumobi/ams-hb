@@ -39,158 +39,165 @@ function trackJavaScriptError(e) {
 
 window.addEventListener('error', trackJavaScriptError, false);
 
-var HELPERS = {};
+var HELPERS = {
+    filterArrayByKeys: function(array, keys) {
+        array.filter(
+            function(e) {
+              return this.indexOf(e) < 0;
+            }
+        , filterArray);
+    },
 
-HELPERS.lookupByToken = function(array, token) {
-    var lookup = [];
-    for (var i = 0, len = array.length; i < len; i++) {
-        lookup[array[i][token]] = array[i];
-    }
-    return lookup;
-};
+    lookupByToken: function(array, token) {
+        var lookup = [];
+        for (var i = 0, len = array.length; i < len; i++) {
+            lookup[array[i][token]] = array[i];
+        }
+        return lookup;
+    },
 
-HELPERS.mergeRecursive = function(obj1, obj2) {
-    if (Array.isArray(obj2)) { 
-        return obj1.concat(obj2); 
-    };
-    for (var p in obj2) {
-        try {
-            // Property in destination object set; update its value.
-            if ( obj2[p].constructor==Object ) {
-                obj1[p] = mergeRecursive(obj1[p], obj2[p]);
-            } else if (Array.isArray(obj2[p])) {
-                obj1[p] = obj1[p].concat(obj2[p]);
-            } else {
+    mergeRecursive: function(obj1, obj2) {
+        if (Array.isArray(obj2)) { 
+            return obj1.concat(obj2); 
+        };
+        for (var p in obj2) {
+            try {
+                // Property in destination object set; update its value.
+                if ( obj2[p].constructor==Object ) {
+                    obj1[p] = mergeRecursive(obj1[p], obj2[p]);
+                } else if (Array.isArray(obj2[p])) {
+                    obj1[p] = obj1[p].concat(obj2[p]);
+                } else {
+                    obj1[p] = obj2[p];
+                }
+            } catch(e) {
+                // Property in destination object not set; create it and set its value.
                 obj1[p] = obj2[p];
             }
-        } catch(e) {
-            // Property in destination object not set; create it and set its value.
-            obj1[p] = obj2[p];
-        }
-    };
+        };
+    
+        return obj1;
+    },
 
-    return obj1;
+    trackAdblock: function() {
+        console.log('tracking adblock');    
+        var test = document.createElement('div');
+        test.innerHTML = '&nbsp;';
+        test.className = 'adsbox';
+        document.body.appendChild(test);
+        window.setTimeout(function() {
+            if (test.offsetHeight === 0) {
+                ga('send', 'event', 'Ad Setting', 'Adblock', 'Enabled');
+            } else {
+                ga('send', 'event', 'Ad Setting', 'Adblock', 'Disabled');            
+            }
+            test.remove();
+        }, 400);
+    },
+
+    logAdUnits: function(adUnits) {
+        var output = [];
+        for (var j = 0; j < adUnits.length; j++) {
+            console.log(adUnits[j]);
+            output.push({
+                'adunit': adUnits[j].code
+            });
+        }
+    
+        if (output.length) {
+            if (console.table) {
+                console.table(output);
+            } else {
+                for (var j = 0; j < output.length; j++) {
+                    console.log(output[j]);
+                }
+            } 
+        }
+    },
+
+    logBidResponses: function(responses) {
+    
+        var output = [];
+        for (var adunit in responses) {
+            if (responses.hasOwnProperty(adunit)) {
+                var bids = responses[adunit].bids;
+                for (var i = 0; i < bids.length; i++) {
+                    var b = bids[i];
+                    output.push({
+                        'adunit': adunit, 'adId': b.adId, 'size': b.size, 'bidder': b.bidder,
+                        'time': b.timeToRespond, 'cpm': b.cpm, 'msg': b.statusMessage
+                    });
+                }
+            }
+        }
+        if (output.length) {
+            if (console.table) {
+                console.table(output);
+            } else {
+                for (var j = 0; j < output.length; j++) {
+                    console.log(output[j]);
+                }
+            }
+        } else {
+            console.warn('NO prebid responses');
+        }
+    }
 };
 
-HELPERS.trackAdblock = function() {
-    console.log('tracking adblock');    
-    var test = document.createElement('div');
-    test.innerHTML = '&nbsp;';
-    test.className = 'adsbox';
-    document.body.appendChild(test);
-    window.setTimeout(function() {
-        if (test.offsetHeight === 0) {
-            ga('send', 'event', 'Ad Setting', 'Adblock', 'Enabled');
-        } else {
-            ga('send', 'event', 'Ad Setting', 'Adblock', 'Disabled');            
+var CONFIG = {
+    adServer: function(siteId) {
+        var urlams = location.href;
+        var nbcar = urlams.length;
+        var urlnb = 29;
+        var catnb = 4;
+        var posa = nbcar-15;
+        urlend = urlams.substring(posa, nbcar-1);
+        
+        kvpage = urlams.substring(urlnb, urlnb + catnb);
+        urllrn = urlams.substring(30, 20);
+        
+        var ref = document.referrer
+        var urlref = ref.substring(0, 28)
+        
+        // Adserver 
+        
+        var adServer = {};
+        
+        adServer.config = {
+            protocol: 'https',
+            server: 'secserv.adtech.de',
+            network: '1502.1',
+            siteid: siteId,
+            params: {
+                loc: '100',
+                kvcat: kvpage + '',
+                kvref: urlref + '',
+                kvrefhb: urlref + '',
+                kvurlend: urlend + '',
+            }
         }
-        test.remove();
-    }, 400);
+    
+        return adServer;
+    },
+
+    hbAMS: function() {
+        var defaultSettings = {
+            analytics: {
+                trackAdblock: true,
+                trackPrebid: true,
+            },    
+            autoRefresh: {
+                interval: 15000, // milliseconds
+                minVisibility: 0.75, // range 0-1
+                onlyIfBidWinner: true
+            },
+            // prebidAdUnits: ["6544251"],
+            bidTimeout: 1200
+        }
+    
+        return defaultSettings;
+    }
 };
-
-HELPERS.logAdUnits = function(adUnits) {
-    var output = [];
-    for (var j = 0; j < adUnits.length; j++) {
-        console.log(adUnits[j]);
-        output.push({
-            'adunit': adUnits[j].code
-        });
-    }
-
-    if (output.length) {
-        if (console.table) {
-            console.table(output);
-        } else {
-            for (var j = 0; j < output.length; j++) {
-                console.log(output[j]);
-            }
-        } 
-    }
-}
-
-// var responses = pbams.getBidResponses();
-HELPERS.logBidResponses = function(responses) {
-    
-    var output = [];
-    for (var adunit in responses) {
-        if (responses.hasOwnProperty(adunit)) {
-            var bids = responses[adunit].bids;
-            for (var i = 0; i < bids.length; i++) {
-                var b = bids[i];
-                output.push({
-                    'adunit': adunit, 'adId': b.adId, 'size': b.size, 'bidder': b.bidder,
-                    'time': b.timeToRespond, 'cpm': b.cpm, 'msg': b.statusMessage
-                });
-            }
-        }
-    }
-    if (output.length) {
-        if (console.table) {
-            console.table(output);
-        } else {
-            for (var j = 0; j < output.length; j++) {
-                console.log(output[j]);
-            }
-        }
-    } else {
-        console.warn('NO prebid responses');
-    }
-}
-
-var CONFIG = {};
-
-CONFIG.adServer = function(siteId) {
-    var urlams = location.href;
-    var nbcar = urlams.length;
-    var urlnb = 29;
-    var catnb = 4;
-    var posa = nbcar-15;
-    urlend = urlams.substring(posa, nbcar-1);
-    
-    kvpage = urlams.substring(urlnb, urlnb + catnb);
-    urllrn = urlams.substring(30, 20);
-    
-    var ref = document.referrer
-    var urlref = ref.substring(0, 28)
-    
-    // Adserver 
-    
-    var adServer = {};
-    
-    adServer.config = {
-        protocol: 'https',
-        server: 'secserv.adtech.de',
-        network: '1502.1',
-        siteid: siteId,
-        params: {
-            loc: '100',
-            kvcat: kvpage + '',
-            kvref: urlref + '',
-            kvrefhb: urlref + '',
-            kvurlend: urlend + '',
-        }
-    }
-
-    return adServer;
-}
-
-CONFIG.hbAMS = function() {
-    var defaultSettings = {
-        analytics: {
-            trackAdblock: true,
-            trackPrebid: true,
-        },    
-        autoRefresh: {
-            interval: 15000, // milliseconds
-            minVisibility: 0.75, // range 0-1
-            onlyIfBidWinner: true
-        },
-        // prebidAdUnits: ["6544251"],
-        bidTimeout: 1200
-    }
-
-    return defaultSettings;
-}
 
 var pbams = pbams || {};
 
