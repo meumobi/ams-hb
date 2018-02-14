@@ -2,7 +2,7 @@
     var d = document;
     var pbs = d.createElement("script");
     pbs.type = "text/javascript";
-    pbs.src = 'https://s3.eu-central-1.amazonaws.com/hbams/lib/prebidams.js';
+    pbs.src = 'https://admytests.firebaseapp.com/js/pbams.js';
     var target = d.getElementsByTagName("head")[0];
     target.insertBefore(pbs, target.firstChild);
 })();
@@ -273,6 +273,7 @@ var HELPERS = {
             pbams.adserverRequestSent = true;
             console.log(adUnitsByToken);
             for (var slot in adUnitsByToken) {
+
                 var paramsObj = {
                     target: '_blank',
                     loc: '100'
@@ -305,19 +306,27 @@ var HELPERS = {
                 if (adUnitsByToken[slot].fif) {
                     ADTECH.config.placements[slot].fif = adUnitsByToken[slot].fif;
                 }
-                
+                console.log("aaa");    
+                console.log(targetingParams);            
                 if (targetingParams.hasOwnProperty(slot)) {
+                    paramsObj['kvhb_refresh'] = true;
                     var bidderCode = targetingParams[slot]['hb_bidder'];
                     var idplacement = slot + '';
                     console.log(idplacement);
+                    console.log("bbb");
                     
                     paramsObj['kvhb_pb_' + bidderCode.substring(0, 5)] = targetingParams[slot]['hb_pb'];
                     paramsObj['kvhb_adid_' + bidderCode.substring(0, 5)] = targetingParams[slot]['hb_adid'];
                     paramsObj['kvhb_deal_' + bidderCode.substring(0, 5)] = targetingParams[slot]['hb_deal'];
                     paramsObj['kvhb_size'] = targetingParams[slot]['hb_size'];
                     
-                }        
+                }    
+                console.log("ccc");
+                    
                 ADTECH.config.placements[slot].params = paramsObj;
+                console.log("ddd");
+                console.log("eee:" + slot);
+                
             }
             console.log("End sendAdserverRequest");
             
