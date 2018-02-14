@@ -180,9 +180,16 @@ function filterAdUnitsByIds(adUnits, ids) {
 }
 
 function filterAdUnitsBade(adUnitsBade, adUnitsToBid) {
+        
     return adUnitsToBid.filter(function(element) {
-        if (adUnitsBade.indexOf(element.code,0) >= 0) {
-            return false;
+        if (adUnitsBade.length) {
+            for (var i = 0; i < adUnitsBade.length; i++) {
+                if (adUnitsBade[i].code == element.code) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }
         } else {
             return true;
         }

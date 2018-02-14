@@ -113,40 +113,6 @@ var IdzoneRubibtfd =  '806226';
 var IdzoneRubiatfm =  '806228';
 var IdzoneRubibtfm =  '806230';
 
-// keyvalue AMS
-
-var urlams = location.href;
-var nbcar = urlams.length;
-var urlnb = 29;
-var catnb = 4;
-var posa = nbcar-15;
-urlend = urlams.substring(posa, nbcar-1);
-
-kvpage = urlams.substring(urlnb, urlnb + catnb);
-urllrn = urlams.substring(30, 20);
-
-var ref = document.referrer
-var urlref = ref.substring(0, 28)
-
-// Adserver 
-
-var adServer = {};
-
-adServer.config = {
-    protocol: 'https',
-    server: 'secserv.adtech.de',
-    network: '1502.1',
-    siteid: AMSID,
-    params: {
-        loc: '100',
-        kvcat: kvpage + '',
-        kvref: urlref + '',
-        kvrefhb: urlref + '',
-        kvurlend: urlend + '',
-    }
-}
-
-
 /* var AdUnits*/
 
 var adUnits = [
