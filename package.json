@@ -1,0 +1,25 @@
+{
+  "name": "ams-hb",
+  "version": "1.0.0",
+  "description": "ams lib for header-bidding",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/meumobi/ams-hb.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/meumobi/ams-hb/issues"
+  },
+  "homepage": "https://github.com/meumobi/ams-hb#readme",
+  "dependencies": {
+    "gulp": "^3.9.1"
+  },
+  "devDependencies": {
+    "browser-sync": "^2.23.6"
+  }
+}
