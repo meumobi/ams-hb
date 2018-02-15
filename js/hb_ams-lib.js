@@ -44,7 +44,7 @@ var HELPERS = {
         filterArrayByKeys([1,2,3,4], [2,4])) return [2,4]
     */
     filterArrayByKeys: function (array, keys) {
-        array.filter(
+        return array.filter(
             function (e) {
                 return !(this.indexOf(e) < 0);
             }
@@ -499,8 +499,13 @@ var hbAMS = (function (hb, HELPERS, CONFIG, ADTECH, pbams) {
     });
 
     configBid();
+    var adUnitsByToken = HELPERS.lookupByToken(hb.settings.adUnits, 'code');
+    var filteredArray = HELPERS.filterArrayByKeys(Object.keys(adUnitsByToken), hbAMS.settings.prebidAdUnitIds);
+
+    console.log(Object.values(filteredArray));
+
     if (hb.settings.prebidAdUnitIds && hb.settings.prebidAdUnitIds.length > 0) {
-        addAdUnits(hb.settings.prebidAdUnitIds);
+        addAdUnits(Object.values(filteredArray));
     }
 
     return hb;
