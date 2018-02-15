@@ -40,12 +40,15 @@ function trackJavaScriptError(e) {
 window.addEventListener('error', trackJavaScriptError, false);
 
 var HELPERS = {
+    /*
+        filterArrayByKeys([1,2,3,4], [2,4])) return [2,4]
+    */
     filterArrayByKeys: function(array, keys) {
         array.filter(
             function(e) {
-              return this.indexOf(e) < 0;
+              return !(this.indexOf(e) < 0);
             }
-        , filterArray);
+        , keys);
     },
 
     lookupByToken: function(array, token) {
@@ -184,7 +187,7 @@ var CONFIG = {
         var defaultSettings = {
             analytics: {
                 trackAdblock: true,
-                trackPrebid: true,
+                trackPrebid: false,
             },    
             autoRefresh: {
                 interval: 15000, // milliseconds
@@ -494,6 +497,9 @@ var hbAMS = (function (hb, HELPERS, CONFIG, ADTECH, pbams) {
     });
 
     configBid();
+    // var adUnitsById = [];
+    // adUnitsById = HELPERS.lookupByToken(hbAMS.settings.adUnits, 'code');
+
     if (hb.settings.prebidAdUnitIds && hb.settings.prebidAdUnitIds.length > 0) {
         addAdUnits(hb.settings.prebidAdUnitIds);
     }
