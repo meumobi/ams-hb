@@ -7,18 +7,12 @@ hbAMS.settings = {
       trackPrebid: true,
   },    
   autoRefresh: {
-      interval: 35000, //milliseconds
+      interval: 10000, //milliseconds
       minVisibility: 0.49, //range 0-1
-      onlyIfBidWinner: true
+      onlyIfBidWinner: false
   },
-prebidAdUnitIds: [6546430, 6546432, 6546433, 6546434, 6546435, 6546436, 6568501, 6568502, 6568503, 6568504, 6568505, 6570074, 6570075, 6570109, 6570119, 6570135]
-  
-  
+  prebidAdUnitIds: [6546430, 6546432, 6546433, 6546434, 6546435, 6546436, 6568501, 6568502, 6568503, 6568504, 6568505, 6570074, 6570075, 6570109, 6570119, 6570135]
 }
-/*   
-prebidAdUnitIds: [6546430, 6546432, 6546433, 6546434, 6546435, 6546436, 6568501, 6568502, 6568503, 6568504, 6568505, 6570074, 6570075, 6570109, 6570119, 6570135]
-prebidAdUnitIds: [6546430, 6546434, 6568502, 6568503, 6568504]
-*/
 
 // Wallpaper
 
@@ -138,6 +132,7 @@ var sidheader ='bb215c0b-aa8c-4d23-8369-1e4bcbd3526f';
 var sidsquare = '4c74a4d5-b314-494e-9245-1891f312af90';
 
 /* var AdUnits*/
+
 hbAMS.settings.adUnits = [
 
     // Wallpaper
@@ -146,20 +141,32 @@ hbAMS.settings.adUnits = [
     code: wallpaperdesk,
     alias: awallpaperdesk,
     responsive: {useresponsive: true},
-    fif: { usefif: true },
-    sizeMapping: [
-        {
-            minWidth: 768,
-            sizes: [300, 250]
-        },
-    ],
     bounds: [
         { id: wallpapermob, min: 0, max: 767 },
         { id: wallpapertab, min: 768, max: 1023 },
         { id: wallpaperdesk, min: 1024, max: 9999 },
     ],
     sizeid: '16',
-    bids: [
+    bids: []
+},
+// Square ATF
+{
+    code: squareatfdesk,
+    autoRefresh: true,
+    alias: asquareatfdesk,
+    responsive: {useresponsive: true},
+    fif: { usefif: true },
+    sizeMapping: [
+        {
+            minWidth: 1024,
+            sizes: [300, 250]
+        },
+    ],
+    bounds: [
+        { id: squareatfdesk, min: 1024, max: 9999 }
+    ],
+    sizeid: '225',
+    bids: [ 
         {
             bidder: 'rubicon',
             params: {
@@ -173,7 +180,7 @@ hbAMS.settings.adUnits = [
         {
             bidder: "improvedigital",
             params: {
-                placementId: IdPOLsquareatftab,
+                placementId: IdPOLsquareatfdesk,
             }
         },
         {
@@ -181,20 +188,23 @@ hbAMS.settings.adUnits = [
             params: {
                 domain: '//prg.smartadserver.com',
                 siteId: IdSiteSAS,
-                pageId: PageIdSAStabATF,
+                pageId: PageIdSASdeskATF,
                 formatId: sizeIdSASsquare,
             }
-        },   
+        },  
+
     ]
 },
-// Square ATF
-
 {
     code: squareatftab,
     alias: asquareatftab,
     responsive: {useresponsive: true},
     fif: { usefif: true },
     sizeMapping: [
+        {
+            minWidth: 1024,
+            sizes: []
+        },
         {
             minWidth: 768,
             sizes: [300, 250]
@@ -237,6 +247,10 @@ hbAMS.settings.adUnits = [
     responsive: {useresponsive: true},
     fif: { usefif: true },
     sizeMapping: [
+        {
+            minWidth: 768,
+            sizes: []
+        },
         {
             minWidth: 0,
             sizes: [[320, 50], [320, 100]]
@@ -325,6 +339,10 @@ hbAMS.settings.adUnits = [
     fif: { usefif: true },
     sizeMapping: [
         {
+            minWidth: 1024,
+            sizes: []
+        },
+        {
             minWidth: 768,
             sizes: [300, 250]
         },
@@ -366,6 +384,10 @@ hbAMS.settings.adUnits = [
     responsive: {useresponsive: true},
     fif: { usefif: true },
     sizeMapping: [
+        {
+            minWidth: 768,
+            sizes: []
+        },
         {
             minWidth: 0,
             sizes: [[320, 50], [320, 100]]
@@ -456,6 +478,10 @@ hbAMS.settings.adUnits = [
     fif: { usefif: true },
     sizeMapping: [
         {
+            minWidth: 1024,
+            sizes: []
+        },
+        {
             minWidth: 768,
             sizes: [300, 250]
         },
@@ -496,6 +522,10 @@ hbAMS.settings.adUnits = [
     responsive: {useresponsive: true},
     fif: { usefif: true },
     sizeMapping: [
+        {
+            minWidth: 768,
+            sizes: []
+        },
         {
             minWidth: 0,
             sizes: [[320, 50], [320, 100]]
@@ -598,6 +628,10 @@ hbAMS.settings.adUnits = [
     fif: { usefif: true },
     sizeMapping: [
         {
+            minWidth: 1024,
+            sizes: []
+        },
+        {
             minWidth: 768,
             sizes: [300, 250]
         },
@@ -640,6 +674,10 @@ hbAMS.settings.adUnits = [
     sizeMapping: [
         {
             minWidth: 768,
+            sizes: []
+        },
+        {
+            minWidth: 0,
             sizes: [[320, 50], [320, 100]]
         },
     ],
@@ -726,6 +764,10 @@ hbAMS.settings.adUnits = [
     fif: { usefif: true },
     sizeMapping: [
         {
+            minWidth: 1024,
+            sizes: []
+        },
+        {
             minWidth: 768,
             sizes: [300, 250]
         },
@@ -766,6 +808,10 @@ hbAMS.settings.adUnits = [
     responsive: {useresponsive: true},
     fif: { usefif: true },
     sizeMapping: [
+        {
+            minWidth: 768,
+            sizes: []
+        },
         {
             minWidth: 0,
             sizes: [[320, 50], [320, 100]]

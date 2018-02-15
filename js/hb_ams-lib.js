@@ -40,12 +40,13 @@ function trackJavaScriptError(e) {
 window.addEventListener('error', trackJavaScriptError, false);
 
 var HELPERS = {
-    filterArrayByKeys: function(array, keys) {
-        array.filter(
-            function(e) {
-                return this.indexOf(e) < 0;
-            }
-            , filterArray);
+        filterArrayByKeys: function(array, keys) {
+            return array.filter(
+                function(e) {
+                    return keys.indexOf(e) >= 0;
+                } 
+
+            );
         },
         
         lookupByToken: function(array, token) {
@@ -189,7 +190,7 @@ var HELPERS = {
                 autoRefresh: {
                     interval: 15000, // milliseconds
                     minVisibility: 0.75, // range 0-1
-                    onlyIfBidWinner: true
+                    onlyIfBidWinner: false,
                 },
                 // prebidAdUnits: ["6544251"],
                 bidTimeout: 1200
@@ -213,12 +214,15 @@ var HELPERS = {
         console.log("Current settings");
         console.dir(hb.settings);
         
-        var initAdServerSet;
-        
+        var status = {
+            initAdServerSet: false,
+            refreshing: false
+        }
+
         function initAdserver() {
             console.log("initing adserver");
-            console.log("loginiAdServerSet: " + initAdServerSet);
-            if (initAdServerSet) return;
+            console.log("loginiAdServerSet: " + status.initAdServerSet);
+            if (status.initAdServerSet) return;
             console.log("initAdServerSet undefined or false");
             (function () {
                 console.log("self-invoking function");
@@ -232,21 +236,14 @@ var HELPERS = {
                 console.log("adUnitsByToken");
                 console.log(adUnitsByToken);
                 for (var slot in adUnitsByToken) {
-                    console.log("slot:" + slot);
-                    console.log("adUnitsByToken[slot].winner: " + adUnitsByToken[slot].winner);
-                    console.log("!adUnitsByToken[slot].refreshing: " + !adUnitsByToken[slot].refreshing);
-                    console.log("hb.settings.autoRefresh.onlyIfBidWinner: " + !hb.settings.autoRefresh.onlyIfBidWinner);
-                    if (adUnitsByToken[slot].winner || !adUnitsByToken[slot].refreshing || !hb.settings.autoRefresh.onlyIfBidWinner) {
-                        //final
-                        console.log("ADTECH enqueue: " + slot);
-                        ADTECH.enqueueAd(slot);
-                    }
+                    console.log("ADTECH enqueue: " + slot);
+                    ADTECH.enqueueAd(slot);
                 }
                 console.log(ADTECH.config.placements);
                 ADTECH.executeQueue();
                 
             })();
-            initAdServerSet = true;
+            status.initAdServerSet = true;
         }
         
         /**
@@ -262,8 +259,20 @@ var HELPERS = {
         
         function sendAdserverRequest(bidResponses) {
             var targetingParams = pbams.getAdserverTargeting();
-            var responses = pbams.getBidResponses();
-            
+            var responses = pbams.getBidResponses();     
+            console.log("hb.settings.autoRefresh.onlyIfBidWinner" + hb.settings.autoRefresh.onlyIfBidWinner);       
+            console.log("status.refreshing" + status.refreshing);       
+            //if (hb.settings.autoRefresh.onlyIfBidWinner && status.refreshing) {
+                var winners = pbams.getAllWinningBids();
+                // winners = HELPERS.lookupByToken(winners,'adUnitCode');
+                console.log(winners);                
+                // console.log(adUnitsByToken);
+                // console.log(Object.keys(winners));
+                // adUnitsByToken = HELPERS.filterArrayByKeys(adUnitsByToken,Object.keys(winners));
+                // console.log(adUnitsByToken);
+                
+            //}
+            status.refreshing = false;
             console.log("Send AdServer request");
             HELPERS.logBidResponses(responses);
             console.log(pbams.adserverRequestSent);
@@ -273,20 +282,12 @@ var HELPERS = {
             pbams.adserverRequestSent = true;
             console.log(adUnitsByToken);
             for (var slot in adUnitsByToken) {
-
+                console.log("init slot: " + slot);
                 var paramsObj = {
                     target: '_blank',
                     loc: '100'
                 };
-                var bids = responses[slot].bids;
-                var winner = false;
-                for (var i in bids) {
-                    if (bids[i].cpm > 0) {                
-                        winner = true;
-                        break;
-                    }
-                }     
-                adUnitsByToken[slot].winner = winner;
+                
                 ADTECH.config.placements[slot] = {
                     responsive: {useresponsive: true,}
                 };
@@ -305,27 +306,23 @@ var HELPERS = {
                 
                 if (adUnitsByToken[slot].fif) {
                     ADTECH.config.placements[slot].fif = adUnitsByToken[slot].fif;
-                }
-                console.log("aaa");    
-                console.log(targetingParams);            
+                }              
                 if (targetingParams.hasOwnProperty(slot)) {
                     paramsObj['kvhb_refresh'] = true;
                     var bidderCode = targetingParams[slot]['hb_bidder'];
                     var idplacement = slot + '';
                     console.log(idplacement);
-                    console.log("bbb");
+
                     
                     paramsObj['kvhb_pb_' + bidderCode.substring(0, 5)] = targetingParams[slot]['hb_pb'];
                     paramsObj['kvhb_adid_' + bidderCode.substring(0, 5)] = targetingParams[slot]['hb_adid'];
                     paramsObj['kvhb_deal_' + bidderCode.substring(0, 5)] = targetingParams[slot]['hb_deal'];
                     paramsObj['kvhb_size'] = targetingParams[slot]['hb_size'];
                     
-                }    
-                console.log("ccc");
-                    
+                }   
                 ADTECH.config.placements[slot].params = paramsObj;
-                console.log("ddd");
-                console.log("eee:" + slot);
+
+                console.log("end slot: " + slot);
                 
             }
             console.log("End sendAdserverRequest");
@@ -339,7 +336,7 @@ var HELPERS = {
             adUnitsByToken = HELPERS.lookupByToken(adUnits, 'code');
             console.log(adUnitsByToken); 
             
-            initAdServerSet = false;
+            status.initAdServerSet = false;
             
             pbams.que.push(function() {
                 pbams.adserverRequestSent = false;     
@@ -440,12 +437,9 @@ var HELPERS = {
         }
         
         function refresh() {
+            status.refreshing = true;
             var adUnitsVisible = filterAdUnitsVisibility(adUnitsAutoRefresh);
-            
-            adUnitsVisible = adUnitsVisible.map(function(element) {
-                element.refreshing = true;
-                return element;
-            })
+
             console.log(adUnitsVisible);
             if (adUnitsVisible.length > 0) {    
                 console.log("refreshing: " + adUnitsVisible.length);        
