@@ -40,6 +40,11 @@ function trackJavaScriptError(e) {
 window.addEventListener('error', trackJavaScriptError, false);
 
 var HELPERS = {
+    arrayDiff: function(array1, array2) {
+        return array1.filter(function (i) {
+            return array2.indexOf(i) === -1;
+        });
+    },
     /*
         filterArrayByKeys([1,2,3,4], [2,4])) return [2,4]
     */
@@ -98,15 +103,15 @@ var HELPERS = {
         }, 400);
     },
 
-    logAdUnits: function (adUnits) {
+    logAdUnits: function(adUnitIds) {
         var output = [];
-        for (var j = 0; j < adUnits.length; j++) {
-            console.log(adUnits[j]);
+        for (var j = 0; j < adUnitIds.length; j++) {
+            console.log(adUnitIds[j]);
             output.push({
-                'adunit': adUnits[j].code
+                'adunitid': adUnitIds[j]
             });
         }
-
+        
         if (output.length) {
             if (console.table) {
                 console.table(output);
@@ -114,7 +119,7 @@ var HELPERS = {
                 for (var j = 0; j < output.length; j++) {
                     console.log(output[j]);
                 }
-            }
+            } 
         }
     },
 
@@ -206,8 +211,8 @@ var pbams = pbams || {};
 
 var hbAMS = (function (hb, HELPERS, CONFIG, ADTECH, pbams) {
 
-    var adUnitsAutoRefresh = [];
-    var adUnitsBade = [];
+    var adUnitIdsAutoRefresh = [];
+    var adUnitIdsBade = [];
     var adUnitsByToken;
     var localSettings = hb.settings;
 
@@ -261,24 +266,21 @@ var hbAMS = (function (hb, HELPERS, CONFIG, ADTECH, pbams) {
 
     function sendAdserverRequest(bidResponses) {
         var targetingParams = pbams.getAdserverTargeting();
-        var responses = pbams.getBidResponses();
-        console.log("hb.settings.autoRefresh.onlyIfBidWinner" + hb.settings.autoRefresh.onlyIfBidWinner);
-        console.log("status.refreshing" + status.refreshing);
-        //if (hb.settings.autoRefresh.onlyIfBidWinner && status.refreshing) {
-        var winners = pbams.getAllWinningBids();
-        // winners = HELPERS.lookupByToken(winners,'adUnitCode');
-        console.log(winners);
-        // console.log(adUnitsByToken);
-        // console.log(Object.keys(winners));
-        // adUnitsByToken = HELPERS.filterArrayByKeys(adUnitsByToken,Object.keys(winners));
-        // console.log(adUnitsByToken);
-
-        //}
+        var responses = pbams.getBidResponses();     
+        console.log(pbams.getAllWinningBids());
+        console.log("hb.settings.autoRefresh.onlyIfBidWinner: " + hb.settings.autoRefresh.onlyIfBidWinner);       
+        console.log("status.refreshing: " + status.refreshing);       
+        if (hb.settings.autoRefresh.onlyIfBidWinner && status.refreshing) {
+            var winners = pbams.getAllWinningBids();
+            winners = HELPERS.lookupByToken(winners,'adUnitCode');
+            adUnitsByToken = HELPERS.lookupByToken(filterAdUnitsByIds(adUnitsByToken, Object.keys(winners)), 'code');
+            console.log(winners);
+        }
         status.refreshing = false;
         console.log("Send AdServer request");
         HELPERS.logBidResponses(responses);
         console.log(pbams.adserverRequestSent);
-
+        
         if (pbams.adserverRequestSent) return;
         console.log("Set pbams.adserverRequestSent true");
         pbams.adserverRequestSent = true;
@@ -289,116 +291,93 @@ var hbAMS = (function (hb, HELPERS, CONFIG, ADTECH, pbams) {
                 target: '_blank',
                 loc: '100'
             };
-
+            
             ADTECH.config.placements[slot] = {
-                responsive: { useresponsive: true, }
+                responsive: {useresponsive: true,}
             };
-
+            
             if (adUnitsByToken[slot].bounds) {
                 ADTECH.config.placements[slot].responsive.bounds = adUnitsByToken[slot].bounds;
             }
-
+            
             if (adUnitsByToken[slot].sizeid) {
                 ADTECH.config.placements[slot].sizeid = adUnitsByToken[slot].sizeid;
             }
-
+            
             if (adUnitsByToken[slot].alias) {
                 ADTECH.config.placements[slot].alias = adUnitsByToken[slot].alias;
             }
-
+            
             if (adUnitsByToken[slot].fif) {
                 ADTECH.config.placements[slot].fif = adUnitsByToken[slot].fif;
-            }
+            }              
             if (targetingParams.hasOwnProperty(slot)) {
                 paramsObj['kvhb_refresh'] = true;
                 var bidderCode = targetingParams[slot]['hb_bidder'];
                 var idplacement = slot + '';
                 console.log(idplacement);
 
-
+                
                 paramsObj['kvhb_pb_' + bidderCode.substring(0, 5)] = targetingParams[slot]['hb_pb'];
                 paramsObj['kvhb_adid_' + bidderCode.substring(0, 5)] = targetingParams[slot]['hb_adid'];
                 paramsObj['kvhb_deal_' + bidderCode.substring(0, 5)] = targetingParams[slot]['hb_deal'];
                 paramsObj['kvhb_size'] = targetingParams[slot]['hb_size'];
-
-            }
+                
+            }   
             ADTECH.config.placements[slot].params = paramsObj;
 
             console.log("end slot: " + slot);
-
+            
         }
         console.log("End sendAdserverRequest");
-
-        initAdserver();
+        
+        initAdserver();   
     }
 
-    function requestBids(adUnits) {
+    function requestBids(adUnitIds) {
         console.log("Request bids");
-        HELPERS.logAdUnits(adUnits);
+        HELPERS.logAdUnits(adUnitIds);            
+        var adUnits = filterAdUnitsByIds(HELPERS.lookupByToken(hb.settings.adUnits, 'code'), adUnitIds);
+        console.log(adUnits);
         adUnitsByToken = HELPERS.lookupByToken(adUnits, 'code');
-        console.log(adUnitsByToken);
-
+        console.log(adUnitsByToken);             
         status.initAdServerSet = false;
-
-        pbams.que.push(function () {
-            pbams.adserverRequestSent = false;
+        
+        pbams.que.push(function() {
+            pbams.adserverRequestSent = false;     
             pbams.requestBids({
                 adUnits: adUnits,
                 timeout: 1200,//hb.settings.bidTimeout, 
                 bidsBackHandler: sendAdserverRequest
-            });
+            });     
         });
     }
-
-    function loadAdUnitsIdsOnPage() {
+    
+    function loadAdUnitIdsOnPage() {
         var adUnitsOnPage = document.getElementsByClassName("ams-ad");
         return [].slice.call(adUnitsOnPage).map(element => element.id);
     }
 
-    function filterAdUnitsByIds(adUnits, ids) {
-        return adUnits.filter(function (element) {
+    function filterAdUnitsByIds(adUnits, adUnitIds) {
+        return adUnitIds.map(function(e) {
+            return adUnits[e];
+        });            
+    }      
 
-            if (ids.indexOf(element.code, 0) >= 0) {
-                return true;
-            } else {
-                return false;
-            }
-        });
-    }
-
-    function filterAdUnitsBade(adUnitsBade, adUnitsToBid) {
-
-        return adUnitsToBid.filter(function (element) {
-            if (adUnitsBade.length) {
-                for (var i = 0; i < adUnitsBade.length; i++) {
-                    if (adUnitsBade[i].code == element.code) {
-                        return false;
-                    } else {
-                        return true;
-                    }
-                }
-            } else {
-                return true;
-            }
-        });
-    }
-
-    function filterAdUnitsVisibility(adUnits) {
-
-        return adUnits.filter(function (element) {
-            if (document.getElementById(element.code)) {
-                var elementVisibility = VisSense(document.getElementById(element.code));
+    function filterAdUnitIdsVisibility(adUnitIds) {            
+        return adUnitIds.filter(function(element) {    
+            if (document.getElementById(element)) {
+                var elementVisibility = VisSense(document.getElementById(element));  
                 return elementVisibility.percentage() > hb.settings.autoRefresh.minVisibility;
             } else {
                 return false;
             }
         });
-    }
+    }    
 
-    function filterAdUnitsAutoRefresh(adUnits) {
-
-        return adUnits.filter(function (element) {
-            return element.autoRefresh;
+    function filterAdUnitIdsAutoRefresh(adUnits, adUnitIds) {            
+        return adUnitIds.filter(function(element) {                
+            return adUnits[element].autoRefresh;
         });
     }
 
@@ -440,29 +419,22 @@ var hbAMS = (function (hb, HELPERS, CONFIG, ADTECH, pbams) {
 
     function refresh() {
         status.refreshing = true;
-        var adUnitsVisible = filterAdUnitsVisibility(adUnitsAutoRefresh);
-
-        console.log(adUnitsVisible);
-        if (adUnitsVisible.length > 0) {
-            console.log("refreshing: " + adUnitsVisible.length);
-            requestBids(adUnitsVisible);
+        var adUnitIdsVisible = filterAdUnitIdsVisibility(adUnitIdsAutoRefresh);
+        if (adUnitIdsVisible.length > 0) {    
+            console.log("refreshing: " + adUnitIdsVisible.length);        
+            requestBids(adUnitIdsVisible); 
         }
     }
 
-    function addAdUnits(adUnitIds) {
-        var adUnitsToBid = filterAdUnitsByIds(hb.settings.adUnits, adUnitIds);
-
-        adUnitsToBid = filterAdUnitsBade(adUnitsBade, adUnitsToBid);
-        console.log("Add Ad units to bid: " + adUnitsToBid.length);
-        HELPERS.logAdUnits(adUnitsToBid);
-        if (adUnitsToBid.length > 0) {
-            requestBids(adUnitsToBid);
-            adUnitsBade = adUnitsBade.concat(adUnitsToBid);
-            var newAdUnitsAutoRefresh = filterAdUnitsAutoRefresh(adUnitsToBid);
-            if (newAdUnitsAutoRefresh.length > 0) {
-                adUnitsAutoRefresh = adUnitsAutoRefresh.concat(newAdUnitsAutoRefresh);
-            }
-        }
+    function addAdUnitIds(adUnitIds) {                       
+        adUnitIdsToBid = HELPERS.arrayDiff(adUnitIds, adUnitIdsBade);
+        console.log("Add Ad units to bid: " + adUnitIdsToBid.length);
+        HELPERS.logAdUnits(adUnitIdsToBid);
+        if (adUnitIdsToBid.length > 0) {
+            requestBids(adUnitIdsToBid);
+            adUnitIdsBade = adUnitIdsBade.concat(adUnitIdsToBid);   
+            adUnitIdsAutoRefresh = adUnitIdsAutoRefresh.concat(filterAdUnitIdsAutoRefresh(HELPERS.lookupByToken(hb.settings.adUnits, 'code'), adUnitIdsToBid));
+        } 
     }
 
     function trackPrebid() {
@@ -499,13 +471,12 @@ var hbAMS = (function (hb, HELPERS, CONFIG, ADTECH, pbams) {
     });
 
     configBid();
-    var adUnitsByToken = HELPERS.lookupByToken(hb.settings.adUnits, 'code');
-    var filteredArray = HELPERS.filterArrayByKeys(Object.keys(adUnitsByToken), hbAMS.settings.prebidAdUnitIds);
-
-    console.log(Object.values(filteredArray));
+    // var adUnitsByToken = HELPERS.lookupByToken(hb.settings.adUnits, 'code');
+    // var filteredArray = HELPERS.filterArrayByKeys(Object.keys(adUnitsByToken), hbAMS.settings.prebidAdUnitIds);
+    // console.log(Object.values(filteredArray));
 
     if (hb.settings.prebidAdUnitIds && hb.settings.prebidAdUnitIds.length > 0) {
-        addAdUnits(Object.values(filteredArray));
+        addAdUnitIds(hb.settings.prebidAdUnitIds);
     }
 
     return hb;
