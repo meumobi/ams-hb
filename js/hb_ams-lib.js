@@ -451,15 +451,14 @@ var hbAMS = (function (hb, HELPERS, CONFIG, ADTECH, pbams) {
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        /*
-        var adUnitsIdAvailableOnPage = loadAdUnitsIdsOnPage();    
-        console.log("DOMContentLoaded, total of adUnits on page: " + adUnitsIdAvailableOnPage.length);
-        console.log(adUnitsIdAvailableOnPage);
-        setTimeout(
-            function() {
-                addAdUnits(adUnitsIdAvailableOnPage)
-            }, 5000
-        ); */
+        if (!hb.settings.prebidAdUnitIds || hb.settings.prebidAdUnitIds.length == 0) {
+            var adUnitIdsAvailableOnPage = loadAdUnitIdsOnPage();    
+            console.log("DOMContentLoaded, total of adUnits on page: " + adUnitIdsAvailableOnPage.length);
+            if (adUnitIdsAvailableOnPage.length>0) {
+                addAdUnitIds(adUnitIdsAvailableOnPage);
+            }            
+        }       
+           
         setInterval(
             function () {
                 refresh();
