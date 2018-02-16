@@ -38,6 +38,39 @@ function trackJavaScriptError(e) {
 }
 
 window.addEventListener('error', trackJavaScriptError, false);
+var times = 0;
+var QUEUEMANAGER = {
+    queue: [],
+    processing: false, 
+    add: function (params, callback) {
+        var date = new Date();
+        console.log("add times:" + times + "|" + date.getTime() );         
+        this.queue.push([params, callback]);
+        this.process();
+    },
+    process: function() {  
+        if (!this.processing) {         
+            if (this.queue.length>0) {
+                this.processing = true;  
+                times++;
+                var date = new Date();
+                console.log("init times:" + times + "|" + date.getTime() );  
+                var item = this.queue.shift();
+                item[1](item[0]);
+                                          
+            }
+        }       
+    },
+    end: function() {
+        if (this.processing) {
+            var date = new Date();
+            console.log("end times:" + times +  "|" + date.getTime() );                    
+            this.processing = false;  
+            this.process();
+        }
+    }
+}
+
 
 var HELPERS = {
     arrayDiff: function(array1, array2) {
@@ -209,12 +242,15 @@ var CONFIG = {
 
 var pbams = pbams || {};
 
-var hbAMS = (function (hb, HELPERS, CONFIG, ADTECH, pbams) {
+var hbAMS = (function (hb, HELPERS, CONFIG, ADTECH, pbams, queueManager) {
 
     var adUnitIdsAutoRefresh = [];
     var adUnitIdsBade = [];
     var adUnitsByToken;
     var localSettings = hb.settings;
+
+
+
 
     pbams.que = pbams.que || [];
     hb.settings = HELPERS.mergeRecursive(CONFIG.hbAMS(), localSettings);
@@ -226,7 +262,7 @@ var hbAMS = (function (hb, HELPERS, CONFIG, ADTECH, pbams) {
         refreshing: false
     }
 
-    function initAdserver() {
+    function initAdserver() {        
         console.log("initing adserver");
         console.log("loginiAdServerSet: " + status.initAdServerSet);
         if (status.initAdServerSet) return;
@@ -239,7 +275,7 @@ var hbAMS = (function (hb, HELPERS, CONFIG, ADTECH, pbams) {
                 return;
             }
             ADTECH.config.page = CONFIG.adServer(hb.settings.siteId).config;
-
+            
             console.log("adUnitsByToken");
             console.log(adUnitsByToken);
             for (var slot in adUnitsByToken) {
@@ -247,6 +283,7 @@ var hbAMS = (function (hb, HELPERS, CONFIG, ADTECH, pbams) {
                 ADTECH.enqueueAd(slot);
             }
             console.log(ADTECH.config.placements);
+            console.log(ADTECH.config);
             ADTECH.executeQueue();
 
         })();
@@ -264,7 +301,7 @@ var hbAMS = (function (hb, HELPERS, CONFIG, ADTECH, pbams) {
     * @param {String} response.adContainerId The id of the container associated with the bid in the DOM.
     */
 
-    function sendAdserverRequest(bidResponses) {
+    function sendAdserverRequest(bidResponses) {            
         var targetingParams = pbams.getAdserverTargeting();
         var responses = pbams.getBidResponses();     
         console.log(pbams.getAllWinningBids());
@@ -274,6 +311,7 @@ var hbAMS = (function (hb, HELPERS, CONFIG, ADTECH, pbams) {
             var winners = pbams.getAllWinningBids();
             winners = HELPERS.lookupByToken(winners,'adUnitCode');
             adUnitsByToken = HELPERS.lookupByToken(filterAdUnitsByIds(adUnitsByToken, Object.keys(winners)), 'code');
+            console.log("winners");
             console.log(winners);
         }
         status.refreshing = false;
@@ -331,7 +369,8 @@ var hbAMS = (function (hb, HELPERS, CONFIG, ADTECH, pbams) {
         }
         console.log("End sendAdserverRequest");
         
-        initAdserver();   
+        initAdserver(); 
+        queueManager.end();      
     }
 
     function requestBids(adUnitIds) {
@@ -421,17 +460,18 @@ var hbAMS = (function (hb, HELPERS, CONFIG, ADTECH, pbams) {
         status.refreshing = true;
         var adUnitIdsVisible = filterAdUnitIdsVisibility(adUnitIdsAutoRefresh);
         if (adUnitIdsVisible.length > 0) {    
-            console.log("refreshing: " + adUnitIdsVisible.length);        
-            requestBids(adUnitIdsVisible); 
+            console.log("refreshing: " + adUnitIdsVisible.length);           
+            requestBids(adUnitIdsVisible);     
+                    
         }
     }
 
     function addAdUnitIds(adUnitIds) {                       
-        adUnitIdsToBid = HELPERS.arrayDiff(adUnitIds, adUnitIdsBade);
+        var adUnitIdsToBid = HELPERS.arrayDiff(adUnitIds, adUnitIdsBade);
         console.log("Add Ad units to bid: " + adUnitIdsToBid.length);
         HELPERS.logAdUnits(adUnitIdsToBid);
         if (adUnitIdsToBid.length > 0) {
-            requestBids(adUnitIdsToBid);
+            requestBids(adUnitIdsToBid);     
             adUnitIdsBade = adUnitIdsBade.concat(adUnitIdsToBid);   
             adUnitIdsAutoRefresh = adUnitIdsAutoRefresh.concat(filterAdUnitIdsAutoRefresh(HELPERS.lookupByToken(hb.settings.adUnits, 'code'), adUnitIdsToBid));
         } 
@@ -451,13 +491,13 @@ var hbAMS = (function (hb, HELPERS, CONFIG, ADTECH, pbams) {
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        if (!hb.settings.prebidAdUnitIds || hb.settings.prebidAdUnitIds.length == 0) {
+        //if (!hb.settings.prebidAdUnitIds || hb.settings.prebidAdUnitIds.length == 0) {
             var adUnitIdsAvailableOnPage = loadAdUnitIdsOnPage();    
             console.log("DOMContentLoaded, total of adUnits on page: " + adUnitIdsAvailableOnPage.length);
             if (adUnitIdsAvailableOnPage.length>0) {
                 addAdUnitIds(adUnitIdsAvailableOnPage);
             }            
-        }       
+        //}       
            
         setInterval(
             function () {
@@ -471,12 +511,12 @@ var hbAMS = (function (hb, HELPERS, CONFIG, ADTECH, pbams) {
 
     configBid();
     // var adUnitsByToken = HELPERS.lookupByToken(hb.settings.adUnits, 'code');
-    // var filteredArray = HELPERS.filterArrayByKeys(Object.keys(adUnitsByToken), hbAMS.settings.prebidAdUnitIds);
+    //var filteredArray = HELPERS.filterArrayByKeys(Object.keys(adUnitsByToken), hbAMS.settings.prebidAdUnitIds);
     // console.log(Object.values(filteredArray));
 
     if (hb.settings.prebidAdUnitIds && hb.settings.prebidAdUnitIds.length > 0) {
-        addAdUnitIds(hb.settings.prebidAdUnitIds);
+        queueManager.add(hb.settings.prebidAdUnitIds, addAdUnitIds);
     }
 
     return hb;
-}(hbAMS, HELPERS, CONFIG, ADTECH, pbams));
+}(hbAMS, HELPERS, CONFIG, ADTECH, pbams, QUEUEMANAGER));
