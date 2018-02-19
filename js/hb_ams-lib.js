@@ -107,7 +107,7 @@ var HELPERS = {
             try {
                 // Property in destination object set; update its value.
                 if (obj2[p].constructor == Object) {
-                    obj1[p] = mergeRecursive(obj1[p], obj2[p]);
+                    obj1[p] = this.mergeRecursive(obj1[p], obj2[p]);
                 } else if (Array.isArray(obj2[p])) {
                     obj1[p] = obj1[p].concat(obj2[p]);
                 } else {
@@ -256,7 +256,7 @@ var hbAMS = (function (hb, HELPERS, CONFIG, ADTECH, pbams, queueManager) {
 
     pbams.que = pbams.que || [];
     hb.settings = HELPERS.mergeRecursive(CONFIG.hbAMS(), localSettings);
-    //console.log("Current settings");
+    console.log("Current settings");
     console.dir(hb.settings);
 
     var status = {
