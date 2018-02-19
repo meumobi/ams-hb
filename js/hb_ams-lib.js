@@ -42,6 +42,7 @@ var times = 0;
 var QUEUEMANAGER = {
     queue: [],
     processing: false, 
+    data: [],
     add: function (params, callback) {
         var date = new Date();
         console.log("add times:" + times + "|" + date.getTime() );         
@@ -52,10 +53,11 @@ var QUEUEMANAGER = {
         if (!this.processing) {         
             if (this.queue.length>0) {
                 this.processing = true;  
-                times++;
-                var date = new Date();
-                console.log("init times:" + times + "|" + date.getTime() );  
+                times++;           
                 var item = this.queue.shift();
+                var date = new Date();
+                console.log("init times:" + times + "|" + item[0].join(",") + "|" + date.getTime() );  
+                this.data = item[0];
                 item[1](item[0]);
                                           
             }
@@ -64,7 +66,7 @@ var QUEUEMANAGER = {
     end: function() {
         if (this.processing) {
             var date = new Date();
-            console.log("end times:" + times +  "|" + date.getTime() );                    
+            console.log("end times:" + times + "|" + this.data.join(",") + "|" + date.getTime() );                    
             this.processing = false;  
             this.process();
         }
@@ -121,7 +123,7 @@ var HELPERS = {
     },
 
     trackAdblock: function () {
-        console.log('tracking adblock');
+        //console.log('tracking adblock');
         var test = document.createElement('div');
         test.innerHTML = '&nbsp;';
         test.className = 'adsbox';
@@ -139,7 +141,7 @@ var HELPERS = {
     logAdUnits: function(adUnitIds) {
         var output = [];
         for (var j = 0; j < adUnitIds.length; j++) {
-            console.log(adUnitIds[j]);
+            //console.log(adUnitIds[j]);
             output.push({
                 'adunitid': adUnitIds[j]
             });
@@ -254,7 +256,7 @@ var hbAMS = (function (hb, HELPERS, CONFIG, ADTECH, pbams, queueManager) {
 
     pbams.que = pbams.que || [];
     hb.settings = HELPERS.mergeRecursive(CONFIG.hbAMS(), localSettings);
-    console.log("Current settings");
+    //console.log("Current settings");
     console.dir(hb.settings);
 
     var status = {
@@ -264,30 +266,29 @@ var hbAMS = (function (hb, HELPERS, CONFIG, ADTECH, pbams, queueManager) {
 
     function initAdserver() {        
         console.log("initing adserver");
-        console.log("loginiAdServerSet: " + status.initAdServerSet);
-        if (status.initAdServerSet) return;
-        console.log("initAdServerSet undefined or false");
-        (function () {
-            console.log("self-invoking function");
-            console.log(CONFIG.adServer(hb.settings.siteId));
-            if (!CONFIG.adServer(hb.settings.siteId)) {
-                console.error("adServer.config Object missing");
-                return;
-            }
-            ADTECH.config.page = CONFIG.adServer(hb.settings.siteId).config;
-            
-            console.log("adUnitsByToken");
-            console.log(adUnitsByToken);
-            for (var slot in adUnitsByToken) {
-                console.log("ADTECH enqueue: " + slot);
-                ADTECH.enqueueAd(slot);
-            }
-            console.log(ADTECH.config.placements);
-            console.log(ADTECH.config);
-            ADTECH.executeQueue();
+        console.log("logInitAdServerSet: " + status.initAdServerSet);
+        //if (status.initAdServerSet) return;
+        // console.log("initAdServerSet undefined or false");
+        // console.log("self-invoking function");
+        // console.log(CONFIG.adServer(hb.settings.siteId));
+        if (!CONFIG.adServer(hb.settings.siteId)) {
+            // console.error("adServer.config Object missing");
+            return;
+        }
+        ADTECH.config.page = CONFIG.adServer(hb.settings.siteId).config;
+        
+        // console.log("adUnitsByToken");
+        console.log(adUnitsByToken);
+        for (var slot in adUnitsByToken) {
+            console.log("ADTECH enqueue: " + slot);
+            ADTECH.enqueueAd(slot);
+        }
+        // console.log(ADTECH.config.placements);
+        // console.log(ADTECH.config);
+        ADTECH.executeQueue();
+        queueManager.end(); 
 
-        })();
-        status.initAdServerSet = true;
+        //status.initAdServerSet = true;
     }
 
     /**
@@ -304,9 +305,9 @@ var hbAMS = (function (hb, HELPERS, CONFIG, ADTECH, pbams, queueManager) {
     function sendAdserverRequest(bidResponses) {            
         var targetingParams = pbams.getAdserverTargeting();
         var responses = pbams.getBidResponses();     
-        console.log(pbams.getAllWinningBids());
-        console.log("hb.settings.autoRefresh.onlyIfBidWinner: " + hb.settings.autoRefresh.onlyIfBidWinner);       
-        console.log("status.refreshing: " + status.refreshing);       
+        // console.log(pbams.getAllWinningBids());
+        // console.log("hb.settings.autoRefresh.onlyIfBidWinner: " + hb.settings.autoRefresh.onlyIfBidWinner);       
+        // console.log("status.refreshing: " + status.refreshing);       
         if (hb.settings.autoRefresh.onlyIfBidWinner && status.refreshing) {
             var winners = pbams.getAllWinningBids();
             winners = HELPERS.lookupByToken(winners,'adUnitCode');
@@ -316,7 +317,7 @@ var hbAMS = (function (hb, HELPERS, CONFIG, ADTECH, pbams, queueManager) {
         }
         status.refreshing = false;
         console.log("Send AdServer request");
-        HELPERS.logBidResponses(responses);
+        // HELPERS.logBidResponses(responses);
         console.log(pbams.adserverRequestSent);
         
         if (pbams.adserverRequestSent) return;
@@ -324,7 +325,7 @@ var hbAMS = (function (hb, HELPERS, CONFIG, ADTECH, pbams, queueManager) {
         pbams.adserverRequestSent = true;
         console.log(adUnitsByToken);
         for (var slot in adUnitsByToken) {
-            console.log("init slot: " + slot);
+            // console.log("init slot: " + slot);
             var paramsObj = {
                 target: '_blank',
                 loc: '100'
@@ -364,23 +365,23 @@ var hbAMS = (function (hb, HELPERS, CONFIG, ADTECH, pbams, queueManager) {
             }   
             ADTECH.config.placements[slot].params = paramsObj;
 
-            console.log("end slot: " + slot);
+            // console.log("end slot: " + slot);
             
         }
         console.log("End sendAdserverRequest");
         
         initAdserver(); 
-        queueManager.end();      
+             
     }
 
     function requestBids(adUnitIds) {
         console.log("Request bids");
         HELPERS.logAdUnits(adUnitIds);            
         var adUnits = filterAdUnitsByIds(HELPERS.lookupByToken(hb.settings.adUnits, 'code'), adUnitIds);
-        console.log(adUnits);
+        // console.log(adUnits);
         adUnitsByToken = HELPERS.lookupByToken(adUnits, 'code');
-        console.log(adUnitsByToken);             
-        status.initAdServerSet = false;
+        // console.log(adUnitsByToken);             
+        //status.initAdServerSet = false;
         
         pbams.que.push(function() {
             pbams.adserverRequestSent = false;     
@@ -474,11 +475,13 @@ var hbAMS = (function (hb, HELPERS, CONFIG, ADTECH, pbams, queueManager) {
             requestBids(adUnitIdsToBid);     
             adUnitIdsBade = adUnitIdsBade.concat(adUnitIdsToBid);   
             adUnitIdsAutoRefresh = adUnitIdsAutoRefresh.concat(filterAdUnitIdsAutoRefresh(HELPERS.lookupByToken(hb.settings.adUnits, 'code'), adUnitIdsToBid));
-        } 
+        } else {
+            queueManager.end();
+        }
     }
 
     function trackPrebid() {
-        console.log('tracking prebid');
+        // console.log('tracking prebid');
         pbams.que.push(function () {
             pbams.enableAnalytics({
                 provider: 'ga',
@@ -495,19 +498,18 @@ var hbAMS = (function (hb, HELPERS, CONFIG, ADTECH, pbams, queueManager) {
             var adUnitIdsAvailableOnPage = loadAdUnitIdsOnPage();    
             console.log("DOMContentLoaded, total of adUnits on page: " + adUnitIdsAvailableOnPage.length);
             if (adUnitIdsAvailableOnPage.length > 0) {
-                addAdUnitIds(adUnitIdsAvailableOnPage);
+                queueManager.add(adUnitIdsAvailableOnPage, addAdUnitIds);               
             }            
-
         // }       
         if (adUnitIdsAutoRefresh.length > 0) {
-            console.log("Refresh: ON");
+            // console.log("Refresh: ON");
             setInterval(
                 function () {                    
                     refresh();
                 }, hb.settings.autoRefresh.interval
             );
         } else {
-            console.log("Refresh: OFF");
+            // console.log("Refresh: OFF");
         }
         if (hb.settings.analytics.trackAdblock) {
             HELPERS.trackAdblock();
@@ -515,9 +517,6 @@ var hbAMS = (function (hb, HELPERS, CONFIG, ADTECH, pbams, queueManager) {
     });
 
     configBid();
-    // var adUnitsByToken = HELPERS.lookupByToken(hb.settings.adUnits, 'code');
-    //var filteredArray = HELPERS.filterArrayByKeys(Object.keys(adUnitsByToken), hbAMS.settings.prebidAdUnitIds);
-    // console.log(Object.values(filteredArray));
 
     if (hb.settings.prebidAdUnitIds && hb.settings.prebidAdUnitIds.length > 0) {
         queueManager.add(hb.settings.prebidAdUnitIds, addAdUnitIds);
