@@ -454,16 +454,20 @@ var hbAMS = (function (hb, HELPERS, CONFIG, ADTECH, pbams) {
         if (!hb.settings.prebidAdUnitIds || hb.settings.prebidAdUnitIds.length == 0) {
             var adUnitIdsAvailableOnPage = loadAdUnitIdsOnPage();    
             console.log("DOMContentLoaded, total of adUnits on page: " + adUnitIdsAvailableOnPage.length);
-            if (adUnitIdsAvailableOnPage.length>0) {
+            if (adUnitIdsAvailableOnPage.length > 0) {
                 addAdUnitIds(adUnitIdsAvailableOnPage);
             }            
         }       
-           
-        setInterval(
-            function () {
-                refresh();
-            }, hb.settings.autoRefresh.interval
-        );
+        if (adUnitIdsAutoRefresh.length > 0) {
+            console.log("Refresh: ON");
+            setInterval(
+                function () {                    
+                    refresh();
+                }, hb.settings.autoRefresh.interval
+            );
+        } else {
+            console.log("Refresh: OFF");
+        }
         if (hb.settings.analytics.trackAdblock) {
             HELPERS.trackAdblock();
         }
