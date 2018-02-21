@@ -41,33 +41,33 @@ window.addEventListener('error', trackJavaScriptError, false);
 var times = 0;
 var QUEUEMANAGER = {
     queue: [],
-    processing: false, 
+    processing: false,
     data: [],
     add: function (params, callback) {
         var date = new Date();
-        console.log("add times:" + times + "|" + date.getTime() );         
+        console.log("add times:" + times + "|" + date.getTime());
         this.queue.push([params, callback]);
         this.process();
     },
-    process: function() {  
-        if (!this.processing) {         
-            if (this.queue.length>0) {
-                this.processing = true;  
-                times++;           
+    process: function () {
+        if (!this.processing) {
+            if (this.queue.length > 0) {
+                this.processing = true;
+                times++;
                 var item = this.queue.shift();
                 var date = new Date();
-                console.log("init times:" + times + "|" + item[0].join(",") + "|" + date.getTime() );  
+                console.log("init times:" + times + "|" + item[0].join(",") + "|" + date.getTime());
                 this.data = item[0];
                 item[1](item[0]);
-                                          
+
             }
-        }       
+        }
     },
-    end: function() {
+    end: function () {
         if (this.processing) {
             var date = new Date();
-            console.log("end times:" + times + "|" + this.data.join(",") + "|" + date.getTime() );                    
-            this.processing = false;  
+            console.log("end times:" + times + "|" + this.data.join(",") + "|" + date.getTime());
+            this.processing = false;
             this.process();
         }
     }
@@ -75,7 +75,7 @@ var QUEUEMANAGER = {
 
 
 var HELPERS = {
-    arrayDiff: function(array1, array2) {
+    arrayDiff: function (array1, array2) {
         return array1.filter(function (i) {
             return array2.indexOf(i) === -1;
         });
@@ -138,7 +138,7 @@ var HELPERS = {
         }, 400);
     },
 
-    logAdUnits: function(adUnitIds) {
+    logAdUnits: function (adUnitIds) {
         var output = [];
         for (var j = 0; j < adUnitIds.length; j++) {
             //console.log(adUnitIds[j]);
@@ -146,7 +146,7 @@ var HELPERS = {
                 'adunitid': adUnitIds[j]
             });
         }
-        
+
         if (output.length) {
             if (console.table) {
                 console.table(output);
@@ -154,7 +154,7 @@ var HELPERS = {
                 for (var j = 0; j < output.length; j++) {
                     console.log(output[j]);
                 }
-            } 
+            }
         }
     },
 
@@ -251,11 +251,9 @@ var hbAMS = (function (hb, HELPERS, CONFIG, ADTECH, pbams, queueManager) {
     var adUnitsByToken;
     var localSettings = hb.settings;
 
-
-
-
     pbams.que = pbams.que || [];
     hb.settings = HELPERS.mergeRecursive(CONFIG.hbAMS(), localSettings);
+
     console.log("Current settings");
     console.dir(hb.settings);
 
@@ -264,31 +262,23 @@ var hbAMS = (function (hb, HELPERS, CONFIG, ADTECH, pbams, queueManager) {
         refreshing: false
     }
 
-    function initAdserver() {        
+    function initAdserver() {
         console.log("initing adserver");
         console.log("logInitAdServerSet: " + status.initAdServerSet);
-        //if (status.initAdServerSet) return;
-        // console.log("initAdServerSet undefined or false");
-        // console.log("self-invoking function");
-        // console.log(CONFIG.adServer(hb.settings.siteId));
+
         if (!CONFIG.adServer(hb.settings.siteId)) {
-            // console.error("adServer.config Object missing");
             return;
         }
         ADTECH.config.page = CONFIG.adServer(hb.settings.siteId).config;
-        
-        // console.log("adUnitsByToken");
+
         console.log(adUnitsByToken);
         for (var slot in adUnitsByToken) {
             console.log("ADTECH enqueue: " + slot);
             ADTECH.enqueueAd(slot);
         }
-        // console.log(ADTECH.config.placements);
-        // console.log(ADTECH.config);
-        ADTECH.executeQueue();
-        queueManager.end(); 
 
-        //status.initAdServerSet = true;
+        ADTECH.executeQueue();
+        queueManager.end();
     }
 
     /**
@@ -302,121 +292,111 @@ var hbAMS = (function (hb, HELPERS, CONFIG, ADTECH, pbams, queueManager) {
     * @param {String} response.adContainerId The id of the container associated with the bid in the DOM.
     */
 
-    function sendAdserverRequest(bidResponses) {            
+    function sendAdserverRequest(bidResponses) {
         var targetingParams = pbams.getAdserverTargeting();
-        var responses = pbams.getBidResponses();     
-        // console.log(pbams.getAllWinningBids());
-        // console.log("hb.settings.autoRefresh.onlyIfBidWinner: " + hb.settings.autoRefresh.onlyIfBidWinner);       
-        // console.log("status.refreshing: " + status.refreshing);       
+        var responses = pbams.getBidResponses();
+
         if (hb.settings.autoRefresh.onlyIfBidWinner && status.refreshing) {
             var winners = pbams.getAllWinningBids();
-            winners = HELPERS.lookupByToken(winners,'adUnitCode');
+            winners = HELPERS.lookupByToken(winners, 'adUnitCode');
             adUnitsByToken = HELPERS.lookupByToken(filterAdUnitsByIds(adUnitsByToken, Object.keys(winners)), 'code');
             console.log("winners");
             console.log(winners);
         }
         status.refreshing = false;
         console.log("Send AdServer request");
-        // HELPERS.logBidResponses(responses);
         console.log(pbams.adserverRequestSent);
-        
+
         if (pbams.adserverRequestSent) return;
         console.log("Set pbams.adserverRequestSent true");
         pbams.adserverRequestSent = true;
         console.log(adUnitsByToken);
         for (var slot in adUnitsByToken) {
-            // console.log("init slot: " + slot);
             var paramsObj = {
                 target: '_blank',
                 loc: '100'
             };
-            
+
             ADTECH.config.placements[slot] = {
-                responsive: {useresponsive: true,}
+                responsive: { useresponsive: true, }
             };
-            
+
             if (adUnitsByToken[slot].bounds) {
                 ADTECH.config.placements[slot].responsive.bounds = adUnitsByToken[slot].bounds;
             }
-            
+
             if (adUnitsByToken[slot].sizeid) {
                 ADTECH.config.placements[slot].sizeid = adUnitsByToken[slot].sizeid;
             }
-            
+
             if (adUnitsByToken[slot].alias) {
                 ADTECH.config.placements[slot].alias = adUnitsByToken[slot].alias;
             }
-            
+
             if (adUnitsByToken[slot].fif) {
                 ADTECH.config.placements[slot].fif = adUnitsByToken[slot].fif;
-            }              
+            }
             if (targetingParams.hasOwnProperty(slot)) {
                 paramsObj['kvhb_refresh'] = true;
                 var bidderCode = targetingParams[slot]['hb_bidder'];
                 var idplacement = slot + '';
                 console.log(idplacement);
 
-                
+
                 paramsObj['kvhb_pb_' + bidderCode.substring(0, 5)] = targetingParams[slot]['hb_pb'];
                 paramsObj['kvhb_adid_' + bidderCode.substring(0, 5)] = targetingParams[slot]['hb_adid'];
                 paramsObj['kvhb_deal_' + bidderCode.substring(0, 5)] = targetingParams[slot]['hb_deal'];
                 paramsObj['kvhb_size'] = targetingParams[slot]['hb_size'];
-                
-            }   
-            ADTECH.config.placements[slot].params = paramsObj;
 
-            // console.log("end slot: " + slot);
-            
+            }
+            ADTECH.config.placements[slot].params = paramsObj;
         }
         console.log("End sendAdserverRequest");
-        
-        initAdserver(); 
-             
+
+        initAdserver();
+
     }
 
     function requestBids(adUnitIds) {
         console.log("Request bids");
-        HELPERS.logAdUnits(adUnitIds);            
+        HELPERS.logAdUnits(adUnitIds);
         var adUnits = filterAdUnitsByIds(HELPERS.lookupByToken(hb.settings.adUnits, 'code'), adUnitIds);
-        // console.log(adUnits);
         adUnitsByToken = HELPERS.lookupByToken(adUnits, 'code');
-        // console.log(adUnitsByToken);             
-        //status.initAdServerSet = false;
-        
-        pbams.que.push(function() {
-            pbams.adserverRequestSent = false;     
+
+        pbams.que.push(function () {
+            pbams.adserverRequestSent = false;
             pbams.requestBids({
                 adUnits: adUnits,
-                timeout: 1200,//hb.settings.bidTimeout, 
+                timeout: hb.settings.bidTimeout,
                 bidsBackHandler: sendAdserverRequest
-            });     
+            });
         });
     }
-    
+
     function loadAdUnitIdsOnPage() {
         var adUnitsOnPage = document.getElementsByClassName("ams-ad");
         return [].slice.call(adUnitsOnPage).map(element => element.id);
     }
 
     function filterAdUnitsByIds(adUnits, adUnitIds) {
-        return adUnitIds.map(function(e) {
+        return adUnitIds.map(function (e) {
             return adUnits[e];
-        });            
-    }      
+        });
+    }
 
-    function filterAdUnitIdsVisibility(adUnitIds) {            
-        return adUnitIds.filter(function(element) {    
+    function filterAdUnitIdsVisibility(adUnitIds) {
+        return adUnitIds.filter(function (element) {
             if (document.getElementById(element)) {
-                var elementVisibility = VisSense(document.getElementById(element));  
+                var elementVisibility = VisSense(document.getElementById(element));
                 return elementVisibility.percentage() > hb.settings.autoRefresh.minVisibility;
             } else {
                 return false;
             }
         });
-    }    
+    }
 
-    function filterAdUnitIdsAutoRefresh(adUnits, adUnitIds) {            
-        return adUnitIds.filter(function(element) {                
+    function filterAdUnitIdsAutoRefresh(adUnits, adUnitIds) {
+        return adUnitIds.filter(function (element) {
             return adUnits[element].autoRefresh;
         });
     }
@@ -460,20 +440,20 @@ var hbAMS = (function (hb, HELPERS, CONFIG, ADTECH, pbams, queueManager) {
     function refresh() {
         status.refreshing = true;
         var adUnitIdsVisible = filterAdUnitIdsVisibility(adUnitIdsAutoRefresh);
-        if (adUnitIdsVisible.length > 0) {    
-            console.log("refreshing: " + adUnitIdsVisible.length);           
-            requestBids(adUnitIdsVisible);     
-                    
+        if (adUnitIdsVisible.length > 0) {
+            console.log("refreshing: " + adUnitIdsVisible.length);
+            requestBids(adUnitIdsVisible);
+
         }
     }
 
-    function addAdUnitIds(adUnitIds) {                       
+    function addAdUnitIds(adUnitIds) {
         var adUnitIdsToBid = HELPERS.arrayDiff(adUnitIds, adUnitIdsBade);
         console.log("Add Ad units to bid: " + adUnitIdsToBid.length);
         HELPERS.logAdUnits(adUnitIdsToBid);
         if (adUnitIdsToBid.length > 0) {
-            requestBids(adUnitIdsToBid);     
-            adUnitIdsBade = adUnitIdsBade.concat(adUnitIdsToBid);   
+            requestBids(adUnitIdsToBid);
+            adUnitIdsBade = adUnitIdsBade.concat(adUnitIdsToBid);
             adUnitIdsAutoRefresh = adUnitIdsAutoRefresh.concat(filterAdUnitIdsAutoRefresh(HELPERS.lookupByToken(hb.settings.adUnits, 'code'), adUnitIdsToBid));
         } else {
             queueManager.end();
@@ -481,7 +461,6 @@ var hbAMS = (function (hb, HELPERS, CONFIG, ADTECH, pbams, queueManager) {
     }
 
     function trackPrebid() {
-        // console.log('tracking prebid');
         pbams.que.push(function () {
             pbams.enableAnalytics({
                 provider: 'ga',
@@ -494,22 +473,20 @@ var hbAMS = (function (hb, HELPERS, CONFIG, ADTECH, pbams, queueManager) {
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        //if (!hb.settings.prebidAdUnitIds || hb.settings.prebidAdUnitIds.length == 0) {
-            var adUnitIdsAvailableOnPage = loadAdUnitIdsOnPage();    
-            console.log("DOMContentLoaded, total of adUnits on page: " + adUnitIdsAvailableOnPage.length);
-            if (adUnitIdsAvailableOnPage.length > 0) {
-                queueManager.add(adUnitIdsAvailableOnPage, addAdUnitIds);               
-            }            
-        // }       
+        var adUnitIdsAvailableOnPage = loadAdUnitIdsOnPage();
+        console.log("DOMContentLoaded, total of adUnits on page: " + adUnitIdsAvailableOnPage.length);
+        if (adUnitIdsAvailableOnPage.length > 0) {
+            queueManager.add(adUnitIdsAvailableOnPage, addAdUnitIds);
+        }
         if (adUnitIdsAutoRefresh.length > 0) {
-            // console.log("Refresh: ON");
+            // Refresh: ON
             setInterval(
-                function () {                    
+                function () {
                     refresh();
                 }, hb.settings.autoRefresh.interval
             );
         } else {
-            // console.log("Refresh: OFF");
+            // Refresh: OFF
         }
         if (hb.settings.analytics.trackAdblock) {
             HELPERS.trackAdblock();
