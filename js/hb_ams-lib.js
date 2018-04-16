@@ -73,7 +73,6 @@ var QUEUEMANAGER = {
     }
 }
 
-
 var HELPERS = {
     arrayDiff: function (array1, array2) {
         return array1.filter(function (i) {
@@ -269,7 +268,7 @@ var hbAMS = (function (hb, HELPERS, CONFIG, ADTECH, pbams, queueManager) {
         if (!CONFIG.adServer(hb.settings.siteId)) {
             return;
         }
-        ADTECH.config.page = CONFIG.adServer(hb.settings.siteId).config;
+        ADTECH.config.page = adServer.config;
 
         console.log(adUnitsByToken);
         for (var slot in adUnitsByToken) {
