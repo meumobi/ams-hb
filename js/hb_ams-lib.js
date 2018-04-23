@@ -2,7 +2,7 @@
     var d = document;
     var pbs = d.createElement("script");
     pbs.type = "text/javascript";
-    pbs.src = 'https://admytests.firebaseapp.com/js/pbams.js';
+    pbs.src = 'https://s3.eu-central-1.amazonaws.com/hbams/lib/prebidams.js';
     var target = d.getElementsByTagName("head")[0];
     target.insertBefore(pbs, target.firstChild);
 })();
@@ -188,19 +188,6 @@ var HELPERS = {
 
 var CONFIG = {
     adServer: function (siteId) {
-        var urlams = location.href;
-        var nbcar = urlams.length;
-        var urlnb = 29;
-        var catnb = 4;
-        var posa = nbcar - 15;
-        urlend = urlams.substring(posa, nbcar - 1);
-
-        kvpage = urlams.substring(urlnb, urlnb + catnb);
-        urllrn = urlams.substring(30, 20);
-
-        var ref = document.referrer
-        var urlref = ref.substring(0, 28)
-
         // Adserver 
 
         var adServer = {};
@@ -211,11 +198,7 @@ var CONFIG = {
             network: '1502.1',
             siteid: siteId,
             params: {
-                loc: '100',
-                kvcat: kvpage + '',
-                kvref: urlref + '',
-                kvrefhb: urlref + '',
-                kvurlend: urlend + '',
+                loc: '100'
             }
         }
 
