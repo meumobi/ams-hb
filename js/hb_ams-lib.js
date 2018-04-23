@@ -374,11 +374,13 @@ var hbAMS = (function (hb, HELPERS, CONFIG, ADTECH, pbams, queueManager) {
 
     function loadAdUnitIdsOnPage() {
         var adUnitsOnPage = document.getElementsByClassName("ams-ad");
-        return [].slice.call(adUnitsOnPage).map(element => element.id);
+        return [].slice.call(adUnitsOnPage).map(function(e) {
+            return e.id;
+        });
     }
 
     function filterAdUnitsByIds(adUnits, adUnitIds) {
-        return adUnitIds.map(function (e) {
+        return adUnitIds.map(function(e) {
             return adUnits[e];
         });
     }
