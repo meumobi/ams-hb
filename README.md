@@ -12,6 +12,7 @@ We've took care to use javascript able to run on following browser versions:
 - IE 11+ 
 - Firefox 52+
 - Samsung 6.2+
+
 We didn't test on all of these browsers versions but should work.
 
 UPDATE 2018-02-14: we use prebid.js v0.34.3
@@ -148,3 +149,27 @@ With modules.json containing the following
 
 ## Custom namespacing
 Build prebid from source setting `globalVarName` from package.json to pbams, see [prebid/Prebid.js#409](https://github.com/prebid/Prebid.js/pull/409) for details
+
+# Call Ad Unit through DFP
+
+```
+<script type="text/javascript" src="//admytests.firebaseapp.com/js/DAC.js"></script>
+<script type="text/javascript" src="//admytests.firebaseapp.com/js/hb_cpprg.js"></script>
+<script type="text/javascript" src="//admytests.firebaseapp.com/js/hb_ams-lib.js"></script>
+<div id="6544251" class="ams-ad"></div>
+```
+
+# Adjust Bid Price for Gross/Net
+Bidders may have different pricing deals with publishers, and the returned bid prices may or may not reflect what the publisher will truly receive in the end.
+Prebid.js allows the publisher to [adjust the bidding price](http://prebid.org/blog/adjust-bid-price) before the bids targeting are set on the ad server tag. This feature is supported by [pbjs.bidderSettings](http://prebid.org/dev-docs/publisher-api-reference.html#module_pbjs.bidderSettings)
+
+```
+    pbjs.bidderSettings = {
+      rubicon: {
+        bidCpmAdjustment : function(bidCpm){
+          // adjust the bid in real time before the auction takes place
+          return bidCpm * 0.85;
+        }
+      }
+    };
+```
