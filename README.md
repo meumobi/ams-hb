@@ -21,7 +21,7 @@ UPDATE 2018-02-14: we use prebid.js v0.34.3
 The prebid is launched on load with a predefined list of AdUnits Ids, and when DOMContentLoaded is fired the DOM is parsed to check AdUnits Ids missing on load and re-call a bid for them.
 The DOMContenLoaded solution is also used when Ad Unit is loaded through an AdServer (DFP for example) and not set directly on html page.
 
-To setup and customize the `ams-hb` each site should load a configuration with the 2 mandatory variables: hbAMS and adServer.
+To setup and customize the `ams-ad` each site should load a configuration with the 2 mandatory variables: hbAMS and adServer.
 
 ## hbAMS variable
 
