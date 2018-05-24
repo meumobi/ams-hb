@@ -2,7 +2,7 @@
     var d = document;
     var pbs = d.createElement("script");
     pbs.type = "text/javascript";
-    pbs.src = 'https://s3.eu-central-1.amazonaws.com/hbams/lib/prebidams.js';
+    pbs.src = 'https://ams-hb.firebaseapp.com/js/pbams.js';
     var target = d.getElementsByTagName("head")[0];
     target.insertBefore(pbs, target.firstChild);
 })();
@@ -387,8 +387,10 @@ var hbAMS = (function (hb, HELPERS, CONFIG, ADTECH, pbams, queueManager) {
 
     function configBid() {
         pbams.que.push(function () {
-            pbams.setPriceGranularity('dense');
-            pbams.setConfig({ priceGranularity: 'dense' }, { cookieSyncDelay: 200 });
+            pbams.setConfig({ 
+                priceGranularity: 'dense',
+                cookieSyncDelay: 200 
+            });
             pbams.bidderSettings = {
                 rubicon: {
                     bidCpmAdjustment: function (bidCpm) {
