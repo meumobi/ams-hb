@@ -26,12 +26,7 @@ hbAMS.settings.adUnits = [
     {
         code: 6489219,
         fif: { usefif: true },
-        sizeMapping: [
-            {
-                minWidth: 769,
-                sizes: [[728, 90], [970, 90], [970, 250]]
-            },
-        ],
+        sizes: [[728, 90], [970, 90], [970, 250]],
         bounds: [
             { id: 6493810, min: 0, max: 768 },
             { id: 6489219, min: 769, max: 9999 },
@@ -77,12 +72,7 @@ hbAMS.settings.adUnits = [
         code: 6490489,
         fif: { usefif: true },
         autoRefresh: true,
-        sizeMapping: [
-            {
-                minWidth: 768,
-                sizes: [[300, 600], [300, 250]]
-            },
-        ],
+        sizes: [[300, 600], [300, 250]],
         bounds: [
             { id: 6494025, min: 0, max: 768 },
             { id: 6490489, min: 769, max: 9999 },
@@ -120,13 +110,7 @@ hbAMS.settings.adUnits = [
         code: 6495503,
         fif: { usefif: true },
         autoRefresh: true,
-        //sizes: [[728, 90], [970, 90], [970, 250]],
-        sizeMapping: [
-            {
-                minWidth: 0,
-                sizes: [[728, 90], [970, 90], [970, 250]]
-            },
-        ],
+        sizes: [[728, 90], [970, 90], [970, 250]],
         bounds: [
             { id: 6495504, min: 0, max: 768 },
             { id: 6495503, min: 769, max: 9999 },
