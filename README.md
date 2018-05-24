@@ -15,7 +15,7 @@ We've took care to use javascript able to run on following browser versions:
 
 We didn't test on all of these browsers versions but should work.
 
-UPDATE 2018-02-14: we use prebid.js v0.34.3
+UPDATE 2018-05-24: we use prebid.js v1.11.0
 
 # Prebid launched on load and DOMContentLoaded event
 The prebid is launched on load with a predefined list of AdUnits Ids, and when DOMContentLoaded is fired the DOM is parsed to check AdUnits Ids missing on load and re-call a bid for them.
@@ -72,6 +72,25 @@ adServer.config = {
 };
 ```
 
+# Mandatory updates
+On [v1.*](http://prebid.org/dev-docs/publisher-api-reference.html#module_pbjs.addAdUnits) Prebid.js demands **size** on adUnit i.e.:
+```json
+ {
+    code: 6489219,
+    fif: { usefif: true },
+    sizes: [[728, 90], [970, 90], [970, 250]],
+    bounds: [
+        { id: 6493810, min: 0, max: 768 },
+        { id: 6489219, min: 769, max: 9999 },
+    ],
+    sizeid: '225',
+    bids: []
+},
+```
+
+SizeMapping must be [removed](http://prebid.org/dev-docs//prebid-1.0-API.html#size-mapping-changes) from adUnits.
+
+
 # Customization
 ## auto-refresh
 The auto-refresh allows to refresh specific AdUnits each period with certain conditions. The period is defined by `interval`.
@@ -93,12 +112,7 @@ Each Ad Unit to be refreshed requires the property `autoRefresh` set to true, by
     code: 6490489,
     fif: { usefif: true },
     autoRefresh: true,
-    sizeMapping: [
-        {
-            minWidth: 768,
-            sizes: [[300, 600], [300, 250]]
-        },
-    ],
+    sizes: [[300, 600], [300, 250]],
     ...
 ```
 
@@ -137,13 +151,12 @@ With modules.json containing the following
 
 ```
 [
-"smartadserverBidAdapter",
-"rubiconBidAdapter",
-"widespaceBidAdapter",
-"piximediaBidAdapter",
-"criteoBidAdapter",
-"improvedigitalBidAdapter",
-"aolBidAdapter"
+    "consentManagement",
+    "smartadserverBidAdapter",
+    "rubiconBidAdapter",
+    "aolBidAdapter",
+    "widespaceBidAdapter",
+    "improvedigitalBidAdapter"
 ]
 ```
 
