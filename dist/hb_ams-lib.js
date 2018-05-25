@@ -2,7 +2,7 @@
     var d = document;
     var pbs = d.createElement("script");
     pbs.type = "text/javascript";
-    pbs.src = 'https://ams-hb.firebaseapp.com/js/pbams.js';
+    pbs.src = 'https://s3.eu-central-1.amazonaws.com/hbams/lib/prebiams-1.11.js';
     var target = d.getElementsByTagName("head")[0];
     target.insertBefore(pbs, target.firstChild);
 })();
