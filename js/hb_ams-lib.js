@@ -2,7 +2,7 @@
     var d = document;
     var pbs = d.createElement("script");
     pbs.type = "text/javascript";
-    pbs.src = 'https://s3.eu-central-1.amazonaws.com/hbams/lib/prebiams-1.11.js';
+    pbs.src = 'https://static.admysports.com/hb/lib/v1.1/prebiams-1.11.js';
     var target = d.getElementsByTagName("head")[0];
     target.insertBefore(pbs, target.firstChild);
 })();
