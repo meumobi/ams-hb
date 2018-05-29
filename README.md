@@ -17,6 +17,11 @@ We didn't test on all of these browsers versions but should work.
 
 UPDATE 2018-05-24: we use prebid.js v1.11.0
 
+# ONE by AOL: Dynamic Ad Call Library
+Ads with asynchronous tags allow page content to be loaded independently from ad content, reducing the overall load time of the page.
+
+[Ad Server tag library DAC.js](https://learn.oneadserver.aol.com/reader/NwjtoyhHugfpQzAulJ_o9A/5SMTKNtxD2uPB9JdxkA2Xw) (Dynamic Ad Call) is the JavaScript core component that contains the base code needed for all ad calls and additional code to, e.g., request screen properties or geo location.
+
 # Prebid launched on load and DOMContentLoaded event
 The prebid is launched on load with a predefined list of AdUnits Ids, and when DOMContentLoaded is fired the DOM is parsed to check AdUnits Ids missing on load and re-call a bid for them.
 The DOMContenLoaded solution is also used when Ad Unit is loaded through an AdServer (DFP for example) and not set directly on html page.
@@ -186,3 +191,13 @@ Prebid.js allows the publisher to [adjust the bidding price](http://prebid.org/b
       }
     };
 ```
+
+# Tips for Troubleshooting
+
+Check form prebid.org
+- [Tips for troubleshooting](http://prebid.org/dev-docs/toubleshooting-tips.html)
+- [Prebid.js Troubleshooting Guide](http://prebid.org/dev-docs/prebid-troubleshooting-guide.html)
+
+# Furthermore
+
+- [Implementing OAth's CMP js](https://b2b.oath.com/c/cmp-guide-final?x=XzWzWi)

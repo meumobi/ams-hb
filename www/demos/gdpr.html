@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>GDPR demo</title>
+<!-- 
+  https://aka-cdn-ns.adtech.de/dt/common/DAC.js
+-->
+
+<script src="https://consent.cmp.oath.com/cmp3p.js"></script>
+<script type="text/javascript" src="https://aka-cdn-ns.adtech.de/dt/common/DAC.js"></script>
+<script src="https://ams-hb.firebaseapp.com/js/pbams.js"></script>
+<script type="text/javascript" src="/js/hb_gdpr.js"></script>				
+
+<!--script type="text/javascript" src="/js/hb_mas.js"></script>
+<script type="text/javascript" src="/js/hb_ams-lib.js"></script-->				
+</head>
+<body>
+  <script>
+    // gdprAppliesGlobally should be set on sites that target EU users
+    // uiUrl is the URL to the consent UI.  In this case, it is pointing
+    //      to the locally hosted UI
+    window.__cmp('init', {
+        gdprAppliesGlobally: true,
+        uiUrl: 'https://ams-cmp.firebaseapp.com/cmpui-vierge/cmpui.html'
+    });
+  </script>
+
+<h1>Test Ads integration</h1>
+<h2>H ATF 6489219</h2>
+<div id='6489219'></div>
+
+</body>
+</html>
+
