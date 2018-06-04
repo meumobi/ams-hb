@@ -10,7 +10,7 @@ ADTECH.config.page = {
 };
 
 var adUnits = [{
-  code: 6489219,
+  code: "6489219",
   sizes: [[728, 90], [970, 90], [970, 250]],
   fif: { usefif: true },
   bounds: [	
@@ -52,7 +52,7 @@ var adUnits = [{
   ]
 }];
 
-ADTECH.config.placements[6489219] = adUnits[0];
+ADTECH.config.placements["6489219"] = adUnits[0];
 ADTECH.debugMode = true;
 
 var pbams = pbams || {};
@@ -67,14 +67,14 @@ pbams.que.push(function() {
 
 function initAdserver() {
   console.log("initAdserver - From prebid callback");
-  ADTECH.enqueueAd(6489219);
+  ADTECH.enqueueAd("6489219");
   ADTECH.executeQueue();  
   console.log("initAdserver - End");
 }
 
 setTimeout(function() {
   window.alert("Call to Adserver outside prebid callback");
-  ADTECH.enqueueAd(6489219);
+  ADTECH.enqueueAd("6489219");
   ADTECH.executeQueue();  
 }, 9000);
 

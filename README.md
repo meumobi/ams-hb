@@ -36,7 +36,7 @@ hbAMS variable defined settings and AdUnits.
 var hbAMS = {
   settings: {
     siteId: '670202',
-    prebidAdUnitIds: [],
+    prebidAdUnitIds: ["6494071"],
     autoRefresh: {
       interval: 15000, // milliseconds
       minVisibility: 0.49, // range 0-1
@@ -44,7 +44,7 @@ var hbAMS = {
     },
     adUnits: [
       {
-        code: 6494071,
+        code: "6494071",
         bounds: [
             { id: 6494072, min: 0, max: 768 },
             { id: 6494071, min: 769, max: 9999 },
@@ -81,7 +81,7 @@ adServer.config = {
 On [v1.*](http://prebid.org/dev-docs/publisher-api-reference.html#module_pbjs.addAdUnits) Prebid.js demands **size** on adUnit i.e.:
 ```json
  {
-    code: 6489219,
+    code: "6489219",
     fif: { usefif: true },
     sizes: [[728, 90], [970, 90], [970, 250]],
     bounds: [

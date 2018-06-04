@@ -1,7 +1,7 @@
 var hbAMS = {
     settings: {
         siteId: '670202',
-        prebidAdUnitIds: [6489219, 6490489],
+        prebidAdUnitIds: ["6489219", "6490489"],
         autoRefresh: {
             interval: 15000, // milliseconds
             minVisibility: 0.49, // range 0-1
@@ -24,7 +24,7 @@ adServer.config = {
 
 hbAMS.settings.adUnits = [
     {
-        code: 6489219,
+        code: "6489219",
         fif: { usefif: true },
         sizes: [[728, 90], [970, 90], [970, 250]],
         bounds: [
@@ -69,7 +69,7 @@ hbAMS.settings.adUnits = [
         ]
     },
     {
-        code: 6490489,
+        code: "6490489",
         fif: { usefif: true },
         autoRefresh: true,
         sizes: [[300, 600], [300, 250]],
@@ -107,7 +107,7 @@ hbAMS.settings.adUnits = [
         ]
     },
     {
-        code: 6495503,
+        code: "6495503",
         fif: { usefif: true },
         autoRefresh: true,
         sizes: [[728, 90], [970, 90], [970, 250]],
