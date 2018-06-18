@@ -2,7 +2,7 @@
     var d = document;
     var pbs = d.createElement("script");
     pbs.type = "text/javascript";
-    pbs.src = 'https://ams-hb.firebaseapp.com/js/pbams.js';
+    pbs.src = 'https://solid-antler-163519.firebaseapp.com/js/prebidams-1.13.js';
     var target = d.getElementsByTagName("head")[0];
     target.insertBefore(pbs, target.firstChild);
 })();
@@ -247,6 +247,7 @@ var hbAMS = (function (hb, HELPERS, CONFIG, ADTECH, pbams, queueManager) {
     function initAdserver() {
         console.log("initing adserver");
         console.log("logInitAdServerSet: " + status.initAdServerSet);
+        ADTECH.debugMode = false;
 
         if (!CONFIG.adServer(hb.settings.siteId)) {
             return;
@@ -389,8 +390,17 @@ var hbAMS = (function (hb, HELPERS, CONFIG, ADTECH, pbams, queueManager) {
         pbams.que.push(function () {
             pbams.setConfig({ 
                 priceGranularity: 'dense',
-                cookieSyncDelay: 200 
+                cookieSyncDelay: 200,
             });
+            if (hb.settings.gdpr) {
+                pbams.setConfig({ 
+                    consentManagement: {
+                        cmpApi: 'iab',
+                        timeout: 8000,
+                        allowAuctionWithoutConsent: true
+                    }
+                });
+            }
             pbams.bidderSettings = {
                 rubicon: {
                     bidCpmAdjustment: function (bidCpm) {
@@ -435,6 +445,8 @@ var hbAMS = (function (hb, HELPERS, CONFIG, ADTECH, pbams, queueManager) {
 
     function addAdUnitIds(adUnitIds) {
         var adUnitIdsToBid = HELPERS.arrayDiff(adUnitIds, adUnitIdsBade);
+        console.log(adUnitIds);
+        console.log(adUnitIdsBade);
         console.log("Add Ad units to bid: " + adUnitIdsToBid.length);
         HELPERS.logAdUnits(adUnitIdsToBid);
         if (adUnitIdsToBid.length > 0) {
