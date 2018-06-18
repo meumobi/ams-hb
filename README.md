@@ -42,6 +42,7 @@ var hbAMS = {
       minVisibility: 0.49, // range 0-1
       onlyIfBidWinner: false
     },
+    gdpr: true,
     adUnits: [
       {
         code: "6494071",
@@ -69,6 +70,7 @@ adServer.config = {
   server: 'secserv.adtech.de',
   network: '1502.1',
   siteid: hbAMS.settings.siteId,
+  gdpr: hbAMS.settings.gdpr,
   params: {
     loc: '100',
     kvcat: '[CATEGORY NAME HERE]',
@@ -161,7 +163,8 @@ With modules.json containing the following
     "rubiconBidAdapter",
     "aolBidAdapter",
     "widespaceBidAdapter",
-    "improvedigitalBidAdapter"
+    "improvedigitalBidAdapter",
+    "criteoBidAdapter"
 ]
 ```
 
