@@ -2,7 +2,7 @@
     var d = document;
     var pbs = d.createElement("script");
     pbs.type = "text/javascript";
-    pbs.src = 'https://solid-antler-163519.firebaseapp.com/js/prebidams-1.13.js';
+    pbs.src = 'https://static.admysports.com/hb/lib/prebid/prebidams-1.13.js';
     var target = d.getElementsByTagName("head")[0];
     target.insertBefore(pbs, target.firstChild);
 })();
