@@ -168,6 +168,10 @@ With modules.json containing the following
 ]
 ```
 
+## Consent Management (GDPR)
+
+In order to enable you must to set **hbAMS.settings.gdpr = true** and add CMP script on your page. A working demo can be found [here](https://ams-hb.firebaseapp.com/demos/cmp.html).
+
 ## Custom namespacing
 Build prebid from source setting `globalVarName` from package.json to pbams, see [prebid/Prebid.js#409](https://github.com/prebid/Prebid.js/pull/409) for details
 
