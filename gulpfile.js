@@ -41,7 +41,9 @@ gulp.task('release', (done) => {
 gulp.task('browser-sync', function() {
     browserSync.init({
         files: ["index.html", "js/*.js"],
-	server: true
+        server: {
+            baseDir: "./www/"
+        }
     });
 });
 
