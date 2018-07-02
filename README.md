@@ -143,7 +143,9 @@ With modules.json containing the following
 "piximediaBidAdapter",
 "criteoBidAdapter",
 "improvedigitalBidAdapter",
-"aolBidAdapter"
+"aolBidAdapter",
+"googleAnalyticsAdapter"
+"
 ]
 ```
 
