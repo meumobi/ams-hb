@@ -119,6 +119,22 @@ For more details we recommend the read of [Detecting Adblock on your site and lo
 
 [prebid analytics with GA](http://prebid.org/overview/ga-analytics.html)
 
+You must to set the trackerName 
+```
+ga('create', 'UA-28563613-5', 'auto', 'ams');
+...
+pbams.que.push(function () {
+      pbams.enableAnalytics({
+          provider: 'ga',
+          options: {
+              trackerName: 'ams',
+              global: 'ga',
+              enableDistribution: false,
+          }
+      });
+  });
+```
+
 # Prebid.js
 ## Change list of modules
 To make sure the build only includes the [modules]((https://github.com/prebid/Prebid.js/tree/master/modules)) you want, you can specify the modules to be included with the --modules CLI argument
