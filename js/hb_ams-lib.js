@@ -2,7 +2,7 @@
     var d = document;
     var pbs = d.createElement("script");
     pbs.type = "text/javascript";
-    pbs.src = 'https://s3.eu-central-1.amazonaws.com/hbams/lib/prebidams.js';
+    pbs.src = 'https://static.admysports.com/hb/lib/prebid/prebidams-0.34-1.js';
     var target = d.getElementsByTagName("head")[0];
     target.insertBefore(pbs, target.firstChild);
 })();
@@ -22,19 +22,18 @@
         (i[r].q = i[r].q || []).push(arguments)
     }, i[r].l = 1 * new Date();
     a = s.createElement(o),
-        m = s.getElementsByTagName(o)[0];
+    m = s.getElementsByTagName(o)[0];
     a.async = 1;
     a.src = g;
     m.parentNode.insertBefore(a, m)
 })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
-
-ga('create', 'UA-28563613-5', 'auto');
+ga('create', 'UA-28563613-5', 'auto', 'ams');
 
 function trackJavaScriptError(e) {
     var ie = window.event,
         errMsg = e.message || ie.errorMessage;
     var errSrc = (e.filename || ie.errorUrl) + ': ' + (e.lineno || ie.errorLine);
-    ga('send', 'event', 'JavaScript Error', errMsg, errSrc, { 'nonInteraction': 1 });
+    ga('ams.send', 'event', 'JavaScript Error', errMsg, errSrc, { 'nonInteraction': 1 });
 }
 
 window.addEventListener('error', trackJavaScriptError, false);
@@ -129,9 +128,9 @@ var HELPERS = {
         document.body.appendChild(test);
         window.setTimeout(function () {
             if (test.offsetHeight === 0) {
-                ga('send', 'event', 'Ad Setting', 'Adblock', 'Enabled');
+                ga('ams.send', 'event', 'Ad Setting', 'Adblock', 'Enabled');
             } else {
-                ga('send', 'event', 'Ad Setting', 'Adblock', 'Disabled');
+                ga('ams.send', 'event', 'Ad Setting', 'Adblock', 'Disabled');
             }
             test.remove();
         }, 400);
@@ -449,6 +448,7 @@ var hbAMS = (function (hb, HELPERS, CONFIG, ADTECH, pbams, queueManager) {
             pbams.enableAnalytics({
                 provider: 'ga',
                 options: {
+                    trackerName: 'ams',
                     global: 'ga',
                     enableDistribution: false,
                 }
