@@ -1,18 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>GDPR demo</title>
-<!-- 
-  https://aka-cdn-ns.adtech.de/dt/common/DAC.js
--->
-
-<script src="https://consent.cmp.oath.com/cmp3p.js"></script>
-<script type="text/javascript" src="https://aka-cdn-ns.adtech.de/dt/common/DAC.js"></script>
-<script src="https://ams-hb.firebaseapp.com/js/pbams.js"></script>
-<script type="text/javascript" src="/js/hb_gdpr.js"></script>				
-
-<!--script type="text/javascript" src="/js/hb_mas.js"></script>
-<script type="text/javascript" src="/js/hb_ams-lib.js"></script-->				
+  <title>GDPR demo</title>
+  <!-- 
+    https://aka-cdn-ns.adtech.de/dt/common/DAC.js
+  -->
+  
+  <script src="https://consent.cmp.oath.com/cmp3p.js"></script>
+  <script type="text/javascript" src="/js/DAC-3.1.1.js"></script>
+  <script src="/js/prebidams-1.14.js"></script>
+  <script type="text/javascript" src="/js/hb_gdpr.js"></script>				
+  
 </head>
 <body>
   <script>
@@ -20,15 +18,31 @@
     // uiUrl is the URL to the consent UI.  In this case, it is pointing
     //      to the locally hosted UI
     window.__cmp('init', {
-        gdprAppliesGlobally: true,
-        uiUrl: 'https://ams-cmp.firebaseapp.com/cmpui-vierge/cmpui.html'
+      gdprAppliesGlobally: true,
+      uiUrl: 'https://ams-cmp.firebaseapp.com/cmpui.html'
+    });
+    
+    function clearCookies() {
+      document.cookie = 'EuConsent=; path=/; Max-Age=0';
+      document.cookie = 'cmp=; path=/; Max-Age=0';
+    }
+    function changePreferences() {
+      window.__cmp('renderConsents', function callback(consentString, success){})
+    }
+    window.__cmp('getConsentData', null, function (response, success) {
+      var el = document.getElementById('getConsentData-response');
+      el.innerHTML = '<pre>' + JSON.stringify(response, null, 4) + '</pre>';
+      
     });
   </script>
-
-<h1>Test Ads integration</h1>
-<h2>H ATF 6489219</h2>
-<div id='6489219'></div>
-
+  
+  <h1>Test Ads integration</h1>
+  <h2>H ATF 6489219</h2>
+  <div id='6489219'></div>
+  
+  <button type="button" onclick="clearCookies()">Clear Cookies</button>
+  <button type="button" onclick="changePreferences()">Change Preferences</button>
+  <div id="getConsentData-response"></div>
 </body>
 </html>
 
