@@ -164,7 +164,8 @@ With modules.json containing the following
     "aolBidAdapter",
     "widespaceBidAdapter",
     "improvedigitalBidAdapter",
-    "criteoBidAdapter"
+    "criteoBidAdapter",
+    "googleAnalyticsAdapter"
 ]
 ```
 
