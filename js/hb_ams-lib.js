@@ -29,14 +29,6 @@
 })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
 ga('create', 'UA-28563613-5', 'auto', 'ams');
 
-function trackJavaScriptError(e) {
-    var ie = window.event,
-        errMsg = e.message || ie.errorMessage;
-    var errSrc = (e.filename || ie.errorUrl) + ': ' + (e.lineno || ie.errorLine);
-    ga('ams.send', 'event', 'JavaScript Error', errMsg, errSrc, { 'nonInteraction': 1 });
-}
-
-window.addEventListener('error', trackJavaScriptError, false);
 var times = 0;
 var QUEUEMANAGER = {
     queue: [],
