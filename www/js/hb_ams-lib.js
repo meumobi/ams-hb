@@ -311,18 +311,18 @@ var hbAMS = (function (hb, HELPERS, CONFIG, ADTECH, pbams, queueManager) {
             if (adUnitsByToken[slot].fif) {
                 ADTECH.config.placements[slot].fif = adUnitsByToken[slot].fif;
             }
+            
             if (targetingParams.hasOwnProperty(slot)) {
-                paramsObj['kvhb_refresh'] = true;
-                var bidderCode = targetingParams[slot]['hb_bidder'];
-                var idplacement = slot + '';
-                console.log(idplacement);
-
-
-                paramsObj['kvhb_pb_' + bidderCode.substring(0, 5)] = targetingParams[slot]['hb_pb'];
-                paramsObj['kvhb_adid_' + bidderCode.substring(0, 5)] = targetingParams[slot]['hb_adid'];
-                paramsObj['kvhb_deal_' + bidderCode.substring(0, 5)] = targetingParams[slot]['hb_deal'];
-                paramsObj['kvhb_size'] = targetingParams[slot]['hb_size'];
-
+                if (targetingParams[slot].hasOwnProperty('hb_bidder')) {
+                    paramsObj['kvhb_refresh'] = true;
+                    var bidderCode = targetingParams[slot]['hb_bidder'];
+                    var idplacement = slot + '';
+                    console.log(idplacement);
+                    paramsObj['kvhb_pb_' + bidderCode.substring(0, 5)] = targetingParams[slot]['hb_pb'];
+                    paramsObj['kvhb_adid_' + bidderCode.substring(0, 5)] = targetingParams[slot]['hb_adid'];
+                    paramsObj['kvhb_deal_' + bidderCode.substring(0, 5)] = targetingParams[slot]['hb_deal'];
+                    paramsObj['kvhb_size'] = targetingParams[slot]['hb_size'];
+                }
             }
             ADTECH.config.placements[slot].params = paramsObj;
         }
