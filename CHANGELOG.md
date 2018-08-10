@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.4.1"></a>
+## [1.4.1](https://github.com/meumobi/ams-hb/compare/v1.4.0...v1.4.1) (2018-08-10)
+
+
+### Bug Fixes
+
+* Closes [#28](https://github.com/meumobi/ams-hb/issues/28), Calls to adserver are not made when no bidders responded ([bc32f37](https://github.com/meumobi/ams-hb/commit/bc32f37))
+
+
+
 <a name="1.4.0"></a>
 # [1.4.0](https://github.com/meumobi/ams-hb/compare/v1.3.1...v1.4.0) (2018-07-03)
 
