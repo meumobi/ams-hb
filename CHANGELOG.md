@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.4.2"></a>
+## [1.4.2](https://github.com/meumobi/ams-hb/compare/v1.4.1...v1.4.2) (2018-08-15)
+
+
+### Bug Fixes
+
+* Closes [#29](https://github.com/meumobi/ams-hb/issues/29), add sizeConfig parameter to the pbjs.setConfig ([5a037a1](https://github.com/meumobi/ams-hb/commit/5a037a1))
+
+
+
 <a name="1.4.1"></a>
 ## [1.4.1](https://github.com/meumobi/ams-hb/compare/v1.4.0...v1.4.1) (2018-08-10)
 
