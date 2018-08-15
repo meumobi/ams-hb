@@ -43,6 +43,19 @@ var hbAMS = {
       onlyIfBidWinner: false
     },
     gdpr: true,
+    sizes: {
+      desktop: [
+        [970, 250],
+        [970, 90]
+      ],
+      tablet: [
+        [728, 90],
+        [300, 600]
+      ],
+      phone: [
+        [300, 250]
+      ]
+    },
     adUnits: [
       {
         code: "6494071",
@@ -51,6 +64,7 @@ var hbAMS = {
             { id: 6494071, min: 769, max: 9999 },
         ],
         sizeid: '16',
+        labelAny: ["desktop"],
         bids: []
       },
     ]
