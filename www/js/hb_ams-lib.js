@@ -383,6 +383,19 @@ var hbAMS = (function (hb, HELPERS, CONFIG, ADTECH, pbams, queueManager) {
             pbams.setConfig({ 
                 priceGranularity: 'dense',
                 cookieSyncDelay: 200,
+                sizeConfig: [{
+                    'mediaQuery': '(min-width: 1024px)',
+                    'sizesSupported': hbAMS.settings.sizes.desktop,
+                    'labels': ['desktop']
+                }, {
+                    'mediaQuery': '(min-width: 768px) and (max-width: 1023px)',
+                    'sizesSupported': hbAMS.settings.sizes.tablet,
+                    'labels': ['tablet']
+                }, {
+                    'mediaQuery': '(min-width: 0px) and (max-width: 767px)',
+                    'sizesSupported': hbAMS.settings.sizes.phone,
+                    'labels': ['phone']
+                }]
             });
             if (hb.settings.gdpr) {
                 pbams.setConfig({ 
