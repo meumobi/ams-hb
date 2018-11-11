@@ -15,6 +15,11 @@ We've took care to use javascript able to run on following browser versions:
 
 We didn't test on all of these browsers versions but should work.
 
+If you'd like more details about the prebid workflow we recommend to read [theguardian post about hb](https://github.com/guardian/frontend/blob/ea9fcb675025e8e8c4f6489ed892937979f07f34/static/src/javascripts/projects/common/modules/commercial/docs/header-bidding.md), explaining:
+- how the browser performs auctions
+- how AdServer responds to them read
+- how adverts are displayed
+
 UPDATE 2018-05-24: we use prebid.js v1.11.0
 
 # ONE by AOL: Dynamic Ad Call Library
@@ -208,3 +213,4 @@ Check form prebid.org
 # Furthermore
 
 - [Implementing OAth's CMP js](https://b2b.oath.com/c/cmp-guide-final?x=XzWzWi)
+- [PREBID EVOLUTION](https://rubiconproject.com/insights/thought-leadership/header-bidding-3-0-the-prebid-evolution-continues/)
