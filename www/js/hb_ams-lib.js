@@ -2,7 +2,7 @@
     var d = document;
     var pbs = d.createElement("script");
     pbs.type = "text/javascript";
-    pbs.src = 'https://static.admysports.com/hb/lib/prebid/prebidams-1.13.js';
+    pbs.src = 'https://static.admysports.com/hb/lib/prebid/prebidams-1.14-1.js';
     var target = d.getElementsByTagName("head")[0];
     target.insertBefore(pbs, target.firstChild);
 })();
@@ -28,16 +28,8 @@
     m.parentNode.insertBefore(a, m)
 })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
 
-ga('create', 'UA-28563613-5', 'auto');
+ga('create', 'UA-28563613-5', 'auto', 'ams');
 
-function trackJavaScriptError(e) {
-    var ie = window.event,
-        errMsg = e.message || ie.errorMessage;
-    var errSrc = (e.filename || ie.errorUrl) + ': ' + (e.lineno || ie.errorLine);
-    ga('send', 'event', 'JavaScript Error', errMsg, errSrc, { 'nonInteraction': 1 });
-}
-
-window.addEventListener('error', trackJavaScriptError, false);
 var times = 0;
 var QUEUEMANAGER = {
     queue: [],
@@ -129,9 +121,9 @@ var HELPERS = {
         document.body.appendChild(test);
         window.setTimeout(function () {
             if (test.offsetHeight === 0) {
-                ga('send', 'event', 'Ad Setting', 'Adblock', 'Enabled');
+                ga('ams.send', 'event', 'Ad Setting', 'Adblock', 'Enabled');
             } else {
-                ga('send', 'event', 'Ad Setting', 'Adblock', 'Disabled');
+                ga('ams.send', 'event', 'Ad Setting', 'Adblock', 'Disabled');
             }
             test.remove();
         }, 400);
@@ -319,18 +311,18 @@ var hbAMS = (function (hb, HELPERS, CONFIG, ADTECH, pbams, queueManager) {
             if (adUnitsByToken[slot].fif) {
                 ADTECH.config.placements[slot].fif = adUnitsByToken[slot].fif;
             }
+            
             if (targetingParams.hasOwnProperty(slot)) {
-                paramsObj['kvhb_refresh'] = true;
-                var bidderCode = targetingParams[slot]['hb_bidder'];
-                var idplacement = slot + '';
-                console.log(idplacement);
-
-
-                paramsObj['kvhb_pb_' + bidderCode.substring(0, 5)] = targetingParams[slot]['hb_pb'];
-                paramsObj['kvhb_adid_' + bidderCode.substring(0, 5)] = targetingParams[slot]['hb_adid'];
-                paramsObj['kvhb_deal_' + bidderCode.substring(0, 5)] = targetingParams[slot]['hb_deal'];
-                paramsObj['kvhb_size'] = targetingParams[slot]['hb_size'];
-
+                if (targetingParams[slot].hasOwnProperty('hb_bidder')) {
+                    paramsObj['kvhb_refresh'] = true;
+                    var bidderCode = targetingParams[slot]['hb_bidder'];
+                    var idplacement = slot + '';
+                    console.log(idplacement);
+                    paramsObj['kvhb_pb_' + bidderCode.substring(0, 5)] = targetingParams[slot]['hb_pb'];
+                    paramsObj['kvhb_adid_' + bidderCode.substring(0, 5)] = targetingParams[slot]['hb_adid'];
+                    paramsObj['kvhb_deal_' + bidderCode.substring(0, 5)] = targetingParams[slot]['hb_deal'];
+                    paramsObj['kvhb_size'] = targetingParams[slot]['hb_size'];
+                }
             }
             ADTECH.config.placements[slot].params = paramsObj;
         }
@@ -391,6 +383,19 @@ var hbAMS = (function (hb, HELPERS, CONFIG, ADTECH, pbams, queueManager) {
             pbams.setConfig({ 
                 priceGranularity: 'dense',
                 cookieSyncDelay: 200,
+                sizeConfig: [{
+                    'mediaQuery': '(min-width: 1024px)',
+                    'sizesSupported': hbAMS.settings.sizes.desktop,
+                    'labels': ['desktop']
+                }, {
+                    'mediaQuery': '(min-width: 768px) and (max-width: 1023px)',
+                    'sizesSupported': hbAMS.settings.sizes.tablet,
+                    'labels': ['tablet']
+                }, {
+                    'mediaQuery': '(min-width: 0px) and (max-width: 767px)',
+                    'sizesSupported': hbAMS.settings.sizes.phone,
+                    'labels': ['phone']
+                }]
             });
             if (hb.settings.gdpr) {
                 pbams.setConfig({ 
@@ -463,6 +468,7 @@ var hbAMS = (function (hb, HELPERS, CONFIG, ADTECH, pbams, queueManager) {
             pbams.enableAnalytics({
                 provider: 'ga',
                 options: {
+                    trackerName: 'ams',
                     global: 'ga',
                     enableDistribution: false,
                 }

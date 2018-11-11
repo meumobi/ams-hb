@@ -48,6 +48,19 @@ var hbAMS = {
       onlyIfBidWinner: false
     },
     gdpr: true,
+    sizes: {
+      desktop: [
+        [970, 250],
+        [970, 90]
+      ],
+      tablet: [
+        [728, 90],
+        [300, 600]
+      ],
+      phone: [
+        [300, 250]
+      ]
+    },
     adUnits: [
       {
         code: "6494071",
@@ -56,6 +69,7 @@ var hbAMS = {
             { id: 6494071, min: 769, max: 9999 },
         ],
         sizeid: '16',
+        labelAny: ["desktop"],
         bids: []
       },
     ]
@@ -144,6 +158,21 @@ For more details we recommend the read of [Detecting Adblock on your site and lo
 ## prebid analytics with GA
 
 [prebid analytics with GA](http://prebid.org/overview/ga-analytics.html)
+You must to set the trackerName 
+```
+ga('create', 'UA-28563613-5', 'auto', 'ams');
+...
+pbams.que.push(function () {
+      pbams.enableAnalytics({
+          provider: 'ga',
+          options: {
+              trackerName: 'ams',
+              global: 'ga',
+              enableDistribution: false,
+          }
+      });
+  });
+```
 
 # Prebid.js
 ## Change list of modules
@@ -169,7 +198,8 @@ With modules.json containing the following
     "aolBidAdapter",
     "widespaceBidAdapter",
     "improvedigitalBidAdapter",
-    "criteoBidAdapter"
+    "criteoBidAdapter",
+    "googleAnalyticsAdapter"
 ]
 ```
 

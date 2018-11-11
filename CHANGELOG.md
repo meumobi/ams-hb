@@ -2,6 +2,45 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.4.2"></a>
+## [1.4.2](https://github.com/meumobi/ams-hb/compare/v1.4.1...v1.4.2) (2018-08-15)
+
+
+### Bug Fixes
+
+* Closes [#29](https://github.com/meumobi/ams-hb/issues/29), add sizeConfig parameter to the pbjs.setConfig ([5a037a1](https://github.com/meumobi/ams-hb/commit/5a037a1))
+
+
+
+<a name="1.4.1"></a>
+## [1.4.1](https://github.com/meumobi/ams-hb/compare/v1.4.0...v1.4.1) (2018-08-10)
+
+
+### Bug Fixes
+
+* Closes [#28](https://github.com/meumobi/ams-hb/issues/28), Calls to adserver are not made when no bidders responded ([bc32f37](https://github.com/meumobi/ams-hb/commit/bc32f37))
+
+
+
+<a name="1.4.0"></a>
+# [1.4.0](https://github.com/meumobi/ams-hb/compare/v1.3.1...v1.4.0) (2018-07-03)
+
+
+### Bug Fixes
+
+* add basedir on browsersync config access by default on www as public dir ([313d575](https://github.com/meumobi/ams-hb/commit/313d575))
+* add ga module on prebid.js ([2b93d49](https://github.com/meumobi/ams-hb/commit/2b93d49))
+* allow to track analytics among another trackers ids ([9b08da0](https://github.com/meumobi/ams-hb/commit/9b08da0))
+* move global name from pbjs to pbams ([a933137](https://github.com/meumobi/ams-hb/commit/a933137))
+* remove ga error tracking ([1b78051](https://github.com/meumobi/ams-hb/commit/1b78051))
+
+
+### Features
+
+* new ams lib release ([46351dc](https://github.com/meumobi/ams-hb/commit/46351dc))
+
+
+
 <a name="1.3.1"></a>
 ## [1.3.1](https://github.com/meumobi/ams-hb/compare/v1.1.0...v1.3.1) (2018-06-19)
 
